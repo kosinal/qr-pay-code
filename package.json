@@ -1,0 +1,31 @@
+{
+  "name": "qr-pay-code",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@spayd/core": "^0.0.3",
+    "@types/node": "^24.5.2",
+    "add": "^2.0.6",
+    "openai": "^5.23.0",
+    "preact": "^10.27.2",
+    "qrcode.react": "^4.2.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.2",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/preact": "^3.2.4",
+    "jsdom": "^27.0.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.7",
+    "vitest": "^3.2.4"
+  }
+}
