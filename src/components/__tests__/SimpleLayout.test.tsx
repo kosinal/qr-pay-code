@@ -11,7 +11,7 @@ describe('SimpleLayout Component', () => {
     );
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Payment Information Input');
-    expect(screen.getByText(/Enter payment information in the text area below/)).toBeInTheDocument();
+    expect(screen.getByText('Enter your payment information in the text area below. Include details like amount, currency, recipient, and description.')).toBeInTheDocument();
   });
 
   it('renders the PaymentTextInput component', () => {

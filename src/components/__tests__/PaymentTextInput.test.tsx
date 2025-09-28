@@ -61,7 +61,7 @@ describe('PaymentTextInput Component', () => {
     const clearButton = screen.getByRole('button', { name: 'Clear' });
 
     fireEvent.input(textarea, { target: { value: 'Test text to clear' } });
-    expect(screen.getByText('19 characters')).toBeInTheDocument();
+    expect(screen.getByText('18 characters')).toBeInTheDocument();
 
     fireEvent.click(clearButton);
 
@@ -101,12 +101,7 @@ describe('PaymentTextInput Component', () => {
     );
 
     const textarea = screen.getByRole('textbox');
-    const specialText = '
-Amount: $100.00
-Currency: USD
-Recipient: John Smith
-Description: Invoice #12345
-';
+    const specialText = 'Amount: $100.00\nCurrency: USD\nRecipient: John Smith\nDescription: Invoice #12345';
     fireEvent.input(textarea, { target: { value: specialText } });
 
     expect(screen.getByText(`${specialText.length} characters`)).toBeInTheDocument();
