@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'preact/hooks';
-import { getLocalStorageItem, setLocalStorageItem, removeLocalStorageItem } from '../utils/localStorage';
+import React, { useState, useEffect } from 'react';
+import type { ChangeEvent } from 'react';
+import { Form, InputGroup, Button } from 'react-bootstrap';
 
 interface ApiKeyInputProps {
   onApiKeyChange?: (apiKey: string) => void;
@@ -7,11 +8,11 @@ interface ApiKeyInputProps {
   className?: string;
 }
 
-export const ApiKeyInput = ({
+export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
   onApiKeyChange,
   placeholder = "Enter your API key",
   className = ""
-}: ApiKeyInputProps) => {
+}) => {
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
 
@@ -23,15 +24,17 @@ export const ApiKeyInput = ({
       setApiKey(storedKey);
       onApiKeyChange?.(storedKey);
     }
-  }, []);
+  }, [onApiKeyChange]);
 
-  const handleApiKeyChange = (event: Event) => {
-    if (event.target && event.target instanceof HTMLInputElement) {
-      const newKey = event.target.value;
-      setApiKey(newKey);
+  const handleApiKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newKey = event.target.value;
+    setApiKey(newKey);
+    if (newKey) {
       localStorage.setItem(STORAGE_KEY, newKey);
-      onApiKeyChange?.(newKey);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
     }
+    onApiKeyChange?.(newKey);
   };
 
   const clearApiKey = () => {
@@ -41,39 +44,37 @@ export const ApiKeyInput = ({
   };
 
   return (
-    <div class={`api-key-input ${className}`}>
-      <label htmlFor="api-key-input" class="api-key-label">
+    <Form.Group className={`api-key-input ${className}`}>
+      <Form.Label htmlFor="api-key-input" className="api-key-label">
         API Key
-      </label>
-      <div class="api-key-input-container">
-        <input
+      </Form.Label>
+      <InputGroup>
+        <Form.Control
           id="api-key-input"
           type={showKey ? 'text' : 'password'}
           value={apiKey}
           onChange={handleApiKeyChange}
           placeholder={placeholder}
-          class="api-key-input-field"
+          className="api-key-input-field"
           aria-label="API Key"
         />
-        <button
-          type="button"
+        <Button
+          variant="outline-secondary"
           onClick={() => setShowKey(!showKey)}
-          class="api-key-toggle-btn"
           aria-label={showKey ? "Hide API key" : "Show API key"}
         >
           {showKey ? '👁️' : '👁‍️'}
-        </button>
+        </Button>
         {apiKey && (
-          <button
-            type="button"
+          <Button
+            variant="outline-danger"
             onClick={clearApiKey}
-            class="api-key-clear-btn"
             aria-label="Clear API key"
           >
             ❌
-          </button>
+          </Button>
         )}
-      </div>
-    </div>
+      </InputGroup>
+    </Form.Group>
   );
 };

@@ -1,4 +1,4 @@
-import { render, fireEvent, screen } from '@testing-library/preact';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { PaymentTextInput } from '../PaymentTextInput';
 
@@ -88,8 +88,17 @@ describe('PaymentTextInput Component', () => {
       <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
     );
 
-    const textarea = screen.getByRole('textbox');
-    fireEvent.input(textarea, { target: { value: '' } });
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
+
+    // First add some text
+    fireEvent.change(textarea, { target: { value: 'some text' } });
+    expect(mockOnPaymentTextChange).toHaveBeenCalledWith('some text');
+
+    // Clear the mock to track the next call
+    mockOnPaymentTextChange.mockClear();
+
+    // Then clear it
+    fireEvent.change(textarea, { target: { value: '' } });
 
     expect(screen.getByText('0 characters')).toBeInTheDocument();
     expect(mockOnPaymentTextChange).toHaveBeenCalledWith('');

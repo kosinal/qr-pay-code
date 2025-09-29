@@ -1,9 +1,11 @@
-import { render } from 'preact';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import { SimpleLayout } from './components/SimpleLayout';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
 // Display the payment input component
-const PaymentApp = () => {
+const PaymentApp: React.FC = () => {
   const handlePaymentTextChange = (paymentString: string) => {
     console.log('Payment text changed:', paymentString);
     // Here you can process the payment string for QR code generation
@@ -18,4 +20,8 @@ const PaymentApp = () => {
   );
 };
 
-render(<PaymentApp />, document.getElementById('app')!);
+ReactDOM.createRoot(document.getElementById('app')!).render(
+  <React.StrictMode>
+    <PaymentApp />
+  </React.StrictMode>
+);

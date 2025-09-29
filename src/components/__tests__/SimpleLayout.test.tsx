@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/preact';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { SimpleLayout } from '../SimpleLayout';
 
@@ -32,22 +32,22 @@ describe('SimpleLayout Component', () => {
     expect(container).toBeInTheDocument();
   });
 
-  it('has proper structure with main-content container', () => {
+  it('has proper Bootstrap container structure', () => {
     const { container } = render(
       <SimpleLayout onPaymentTextChange={mockOnPaymentTextChange} />
     );
 
-    const mainContent = container.querySelector('.main-content');
-    expect(mainContent).toBeInTheDocument();
+    const containerDiv = container.querySelector('.simple-layout.container');
+    expect(containerDiv).toBeInTheDocument();
   });
 
-  it('has input-container wrapper', () => {
+  it('has Bootstrap card structure', () => {
     const { container } = render(
       <SimpleLayout onPaymentTextChange={mockOnPaymentTextChange} />
     );
 
-    const inputContainer = container.querySelector('.input-container');
-    expect(inputContainer).toBeInTheDocument();
+    const card = container.querySelector('.card');
+    expect(card).toBeInTheDocument();
   });
 
   it('renders textarea with correct initial state', () => {

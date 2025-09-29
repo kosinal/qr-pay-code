@@ -1,5 +1,4 @@
-import { h } from 'preact';
-import { render, fireEvent, screen } from '@testing-library/preact';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { ApiKeyInput } from '../ApiKeyInput';
 
@@ -143,7 +142,7 @@ describe('ApiKeyInput Component', () => {
     fireEvent.change(input, { target: { value: '' } });
 
     expect(input.value).toBe('');
-    expect(localStorage.getItem('qr-pay-api-key')).toBe('');
+    expect(localStorage.getItem('qr-pay-api-key')).toBeNull();
   });
 
   it('handles special characters in API key', () => {
