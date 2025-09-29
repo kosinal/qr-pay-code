@@ -3,7 +3,8 @@ import {
   getLocalStorageItem,
   setLocalStorageItem,
   removeLocalStorageItem,
-  isLocalStorageAvailable
+  isLocalStorageAvailable,
+  _setLocalStorage
 } from '../localStorage';
 
 const TEST_KEY = 'test-storage-key';
@@ -111,11 +112,20 @@ describe('LocalStorage Utilities', () => {
       // Mock console.warn to track calls
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      // Mock localStorage.removeItem to throw an error
-      const originalRemoveItem = localStorage.removeItem;
-      localStorage.removeItem = vi.fn(() => {
-        throw new Error('Simulated error');
-      });
+      // Create a mock localStorage that throws on removeItem
+      const mockLocalStorage = {
+        getItem: vi.fn(),
+        setItem: vi.fn(),
+        removeItem: vi.fn(() => {
+          throw new Error('Simulated error');
+        }),
+        clear: vi.fn(),
+        key: vi.fn(),
+        length: 0
+      } as unknown as Storage;
+
+      // Use our test helper to set the mock
+      _setLocalStorage(mockLocalStorage);
 
       // Call the function
       removeLocalStorageItem(TEST_KEY);
@@ -129,7 +139,7 @@ describe('LocalStorage Utilities', () => {
 
       // Restore mocks
       consoleSpy.mockRestore();
-      localStorage.removeItem = originalRemoveItem;
+      _setLocalStorage(undefined); // Reset to use real localStorage
     });
   });
 
@@ -139,17 +149,26 @@ describe('LocalStorage Utilities', () => {
     });
 
     it('returns false when localStorage is disabled or unavailable', () => {
-      // Create a simple mock that always throws
-      const originalSetItem = localStorage.setItem;
-      localStorage.setItem = vi.fn(() => {
-        throw new Error('Disabled');
-      });
+      // Create a mock localStorage that throws on setItem
+      const mockLocalStorage = {
+        getItem: vi.fn(),
+        setItem: vi.fn(() => {
+          throw new Error('Disabled');
+        }),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+        key: vi.fn(),
+        length: 0
+      } as unknown as Storage;
 
-      // Don't mock removeItem since it won't be called if setItem throws
+      // Use our test helper to set the mock
+      _setLocalStorage(mockLocalStorage);
+
       const result = isLocalStorageAvailable();
       expect(result).toBe(false);
 
-      localStorage.setItem = originalSetItem;
+      // Reset to use real localStorage
+      _setLocalStorage(undefined);
     });
   });
 

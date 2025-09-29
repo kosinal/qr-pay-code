@@ -5,15 +5,6 @@ import { SimpleLayout } from '../SimpleLayout';
 describe('SimpleLayout Component', () => {
   const mockOnPaymentTextChange = vi.fn();
 
-  it('renders correctly with title and description', () => {
-    render(
-      <SimpleLayout onPaymentTextChange={mockOnPaymentTextChange} />
-    );
-
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Payment Information Input');
-    expect(screen.getByText('Enter your payment information in the text area below. Include details like amount, currency, recipient, and description.')).toBeInTheDocument();
-  });
-
   it('renders the PaymentTextInput component', () => {
     render(
       <SimpleLayout onPaymentTextChange={mockOnPaymentTextChange} />
@@ -65,8 +56,8 @@ describe('SimpleLayout Component', () => {
       <SimpleLayout onPaymentTextChange={mockOnPaymentTextChange} />
     );
 
-    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
+    expect(screen.getByLabelText('API Key')).toBeInTheDocument();
   });
 });

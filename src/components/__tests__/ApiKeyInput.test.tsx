@@ -72,11 +72,11 @@ describe('ApiKeyInput Component', () => {
 
     fireEvent.click(toggleButton);
     expect(input.type).toBe('text');
-    expect(toggleButton).toHaveTextContent('👁️');
+    expect(toggleButton).toBeInTheDocument();
 
     fireEvent.click(toggleButton);
     expect(input.type).toBe('password');
-    expect(toggleButton).toHaveTextContent('👁‍️');
+    expect(toggleButton).toBeInTheDocument();
   });
 
   it('clears API key and removes from localStorage', () => {

@@ -2,12 +2,31 @@
  * Local storage utilities with error handling and type safety
  */
 
+// Allow overriding localStorage for testing
+let _localStorage: Storage | undefined;
+
+/**
+ * Set the localStorage implementation (for testing)
+ * @internal
+ */
+export const _setLocalStorage = (storage: Storage | undefined): void => {
+  _localStorage = storage;
+};
+
+/**
+ * Get the localStorage implementation
+ */
+const getLocalStorage = (): Storage => {
+  return _localStorage || localStorage;
+};
+
 /**
  * Get an item from localStorage with error handling
  */
 export const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
+  const storage = getLocalStorage();
   try {
-    const item = localStorage.getItem(key);
+    const item = storage.getItem(key);
     return item === null ? defaultValue : JSON.parse(item) as T;
   } catch (error) {
     console.warn(`Error reading from localStorage key "${key}":`, error);
@@ -19,8 +38,9 @@ export const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
  * Set an item in localStorage with error handling
  */
 export const setLocalStorageItem = <T>(key: string, value: T): void => {
+  const storage = getLocalStorage();
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    storage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.warn(`Error writing to localStorage key "${key}":`, error);
   }
@@ -30,8 +50,9 @@ export const setLocalStorageItem = <T>(key: string, value: T): void => {
  * Remove an item from localStorage with error handling
  */
 export const removeLocalStorageItem = (key: string): void => {
+  const storage = getLocalStorage();
   try {
-    localStorage.removeItem(key);
+    storage.removeItem(key);
   } catch (error) {
     console.warn(`Error removing from localStorage key "${key}":`, error);
   }
@@ -41,10 +62,11 @@ export const removeLocalStorageItem = (key: string): void => {
  * Check if localStorage is available
  */
 export const isLocalStorageAvailable = (): boolean => {
+  const storage = getLocalStorage();
   try {
     const testKey = '__test__';
-    localStorage.setItem(testKey, 'test');
-    localStorage.removeItem(testKey);
+    storage.setItem(testKey, 'test');
+    storage.removeItem(testKey);
     return true;
   } catch (error) {
     return false;

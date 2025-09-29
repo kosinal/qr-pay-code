@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { Form, InputGroup, Button } from 'react-bootstrap';
+import { FaEye, FaEyeSlash  } from "react-icons/fa";
+import { MdClear } from "react-icons/md";
+
 
 interface ApiKeyInputProps {
   onApiKeyChange?: (apiKey: string) => void;
@@ -59,19 +62,19 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
           aria-label="API Key"
         />
         <Button
-          variant="outline-secondary"
-          onClick={() => setShowKey(!showKey)}
-          aria-label={showKey ? "Hide API key" : "Show API key"}
+            variant="outline-secondary"
+            onClick={() => setShowKey(!showKey)}
+            aria-label={showKey ? "Hide API key" : "Show API key"}
         >
-          {showKey ? '👁️' : '👁‍️'}
+          {showKey ? <FaEyeSlash /> : <FaEye />}
         </Button>
         {apiKey && (
-          <Button
-            variant="outline-danger"
-            onClick={clearApiKey}
+            <Button
+                variant="outline-danger"
+                onClick={clearApiKey}
             aria-label="Clear API key"
           >
-            ❌
+            <MdClear />
           </Button>
         )}
       </InputGroup>
