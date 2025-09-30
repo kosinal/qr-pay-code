@@ -15,7 +15,7 @@ export class GeminiService {
   async generateContent(prompt: string): Promise<GeminiResponse> {
     try {
       const result = await this.genai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt
       });
 

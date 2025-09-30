@@ -46,7 +46,7 @@ describe('GeminiService', () => {
       const result = await geminiService.generateContent(mockPrompt);
 
       expect(mockGenerateContent).toHaveBeenCalledWith({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         contents: mockPrompt
       });
       expect(result).toEqual({ text: mockText });
