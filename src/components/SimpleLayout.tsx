@@ -48,10 +48,7 @@ export const SimpleLayout: React.FC = () => {
             <Card.Body>
               <ApiKeyInput
                 placeholder="Enter your OpenAI API key"
-                onApiKeyChange={(key) => {
-                  setApiKey(key);
-                  console.log('API Key updated:', key ? '***' : 'cleared');
-                }}
+                onApiKeyChange={(key) => setApiKey(key)}
                 className="mb-4"
                 isInvalid={showValidation && !apiKey}
               />
