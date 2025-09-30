@@ -9,12 +9,14 @@ interface ApiKeyInputProps {
   onApiKeyChange?: (apiKey: string) => void;
   placeholder?: string;
   className?: string;
+  isInvalid?: boolean;
 }
 
 export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
   onApiKeyChange,
   placeholder = "Enter your API key",
-  className = ""
+  className = "",
+  isInvalid = false
 }) => {
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
@@ -60,6 +62,7 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
           placeholder={placeholder}
           className="api-key-input-field"
           aria-label="API Key"
+          isInvalid={isInvalid}
         />
         <Button
             variant="outline-secondary"
@@ -78,6 +81,11 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
           </Button>
         )}
       </InputGroup>
+      {isInvalid && (
+        <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
+          API Key is required
+        </Form.Control.Feedback>
+      )}
     </Form.Group>
   );
 };

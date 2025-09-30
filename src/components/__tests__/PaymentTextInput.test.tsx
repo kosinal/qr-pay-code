@@ -3,15 +3,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { PaymentTextInput } from '../PaymentTextInput';
 
 describe('PaymentTextInput Component', () => {
-  const mockOnPaymentTextChange = vi.fn();
+  const mockOnChange = vi.fn();
 
   afterEach(() => {
-    mockOnPaymentTextChange.mockClear();
+    mockOnChange.mockClear();
   });
 
   it('renders correctly with textarea and buttons', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     expect(screen.getByRole('textbox')).toBeInTheDocument();
@@ -21,7 +21,7 @@ describe('PaymentTextInput Component', () => {
 
   it('displays placeholder text', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const textarea = screen.getByRole('textbox');
@@ -30,7 +30,7 @@ describe('PaymentTextInput Component', () => {
 
   it('updates character counter when text is entered', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const textarea = screen.getByRole('textbox');
@@ -39,22 +39,22 @@ describe('PaymentTextInput Component', () => {
     expect(screen.getByText('17 characters')).toBeInTheDocument();
   });
 
-  it('calls onPaymentTextChange with updated text', () => {
+  it('calls onChange with updated text', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const textarea = screen.getByRole('textbox');
     const testText = 'Payment for services rendered';
     fireEvent.input(textarea, { target: { value: testText } });
 
-    expect(mockOnPaymentTextChange).toHaveBeenCalledWith(testText);
-    expect(mockOnPaymentTextChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(testText);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
   it('clears text when clear button is clicked', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const textarea = screen.getByRole('textbox');
@@ -67,12 +67,12 @@ describe('PaymentTextInput Component', () => {
 
     expect(textarea).toHaveValue('');
     expect(screen.getByText('0 characters')).toBeInTheDocument();
-    expect(mockOnPaymentTextChange).toHaveBeenCalledWith('');
+    expect(mockOnChange).toHaveBeenCalledWith('');
   });
 
   it('disables clear button when textarea is empty', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const clearButton = screen.getByRole('button', { name: 'Clear' });
@@ -85,28 +85,25 @@ describe('PaymentTextInput Component', () => {
 
   it('handles empty text correctly', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
 
-    // First add some text
     fireEvent.change(textarea, { target: { value: 'some text' } });
-    expect(mockOnPaymentTextChange).toHaveBeenCalledWith('some text');
+    expect(mockOnChange).toHaveBeenCalledWith('some text');
 
-    // Clear the mock to track the next call
-    mockOnPaymentTextChange.mockClear();
+    mockOnChange.mockClear();
 
-    // Then clear it
     fireEvent.change(textarea, { target: { value: '' } });
 
     expect(screen.getByText('0 characters')).toBeInTheDocument();
-    expect(mockOnPaymentTextChange).toHaveBeenCalledWith('');
+    expect(mockOnChange).toHaveBeenCalledWith('');
   });
 
   it('handles special characters and formatting', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const textarea = screen.getByRole('textbox');
@@ -114,12 +111,12 @@ describe('PaymentTextInput Component', () => {
     fireEvent.input(textarea, { target: { value: specialText } });
 
     expect(screen.getByText(`${specialText.length} characters`)).toBeInTheDocument();
-    expect(mockOnPaymentTextChange).toHaveBeenCalledWith(specialText);
+    expect(mockOnChange).toHaveBeenCalledWith(specialText);
   });
 
   it('handles very long text input', () => {
     render(
-      <PaymentTextInput onPaymentTextChange={mockOnPaymentTextChange} />
+      <PaymentTextInput onChange={mockOnChange} />
     );
 
     const textarea = screen.getByRole('textbox');
@@ -127,6 +124,29 @@ describe('PaymentTextInput Component', () => {
     fireEvent.input(textarea, { target: { value: longText } });
 
     expect(screen.getByText('1000 characters')).toBeInTheDocument();
-    expect(mockOnPaymentTextChange).toHaveBeenCalledWith(longText);
+    expect(mockOnChange).toHaveBeenCalledWith(longText);
+  });
+
+  it('displays validation error when isInvalid is true', () => {
+    render(
+      <PaymentTextInput onChange={mockOnChange} isInvalid={true} />
+    );
+
+    expect(screen.getByText('Payment text is required')).toBeInTheDocument();
+  });
+
+  it('accepts controlled value prop', () => {
+    const { rerender } = render(
+      <PaymentTextInput value="Initial value" onChange={mockOnChange} />
+    );
+
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
+    expect(textarea).toHaveValue('Initial value');
+
+    rerender(
+      <PaymentTextInput value="Updated value" onChange={mockOnChange} />
+    );
+
+    expect(textarea).toHaveValue('Updated value');
   });
 });
