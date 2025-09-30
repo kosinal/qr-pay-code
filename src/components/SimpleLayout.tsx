@@ -29,25 +29,23 @@ export const SimpleLayout: React.FC = () => {
 
       if (response.error) {
         console.error('Gemini API Error:', response.error);
-
-        // Extract message from nested error object
-        let errorMsg = 'An error occurred';
+        let errorMsg: string;
         try {
-          const errorObj = typeof response.error === 'string'
-            ? JSON.parse(response.error)
-            : response.error;
+          const errorObj = JSON.parse(response.error)
           errorMsg = errorObj?.error?.message || errorObj?.message || response.error;
         } catch {
           errorMsg = response.error;
         }
 
         setErrorMessage(errorMsg);
-      } else {
-        console.log('Gemini API Response:', response.text);
-        if (response.paymentData) {
-          console.log('Parsed Payment Data:', response.paymentData);
-        }
+        return
       }
+
+      console.log('Gemini API Response:', response.text);
+      if (response.paymentData) {
+        console.log('Parsed Payment Data:', response.paymentData);
+      }
+
     } catch (error) {
       console.error('Error calling Gemini API:', error);
       const errorMsg = error instanceof Error ? error.message : 'An unknown error occurred';
