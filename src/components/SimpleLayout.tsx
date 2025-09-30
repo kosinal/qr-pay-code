@@ -15,6 +15,96 @@ export const SimpleLayout: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const parseApiError = (error: string): string => {
+    try {
+      const errorObj = JSON.parse(error);
+      return errorObj?.error?.message || errorObj?.message || error;
+    } catch {
+      return error;
+    }
+  };
+
+  const validateBankInformation = (paymentData: any): boolean => {
+    if (!paymentData.account_number || !paymentData.bank_code) {
+      setErrorMessage('Unable to find bank information (account number or bank code) in the payment data.');
+      return false;
+    }
+    return true;
+  };
+
+  const buildIban = (paymentData: any) => {
+    return new IBANBuilder()
+      .countryCode(CountryCode.CZ)
+      .bankCode(paymentData.bank_code)
+      .accountNumber(paymentData.account_number)
+      .build();
+  };
+
+  const buildSpaydAttributes = (paymentData: any, ibanString: string) => {
+    const spaydAttributes: any = {
+      acc: ibanString,
+    };
+
+    if (paymentData.amount !== null) {
+      spaydAttributes.am = paymentData.amount.toFixed(2);
+    }
+
+    if (paymentData.currency) {
+      spaydAttributes.cc = paymentData.currency;
+    }
+
+    if (paymentData.message) {
+      spaydAttributes.msg = paymentData.message;
+    }
+
+    if (paymentData.payment_date) {
+      spaydAttributes.dt = new Date(paymentData.payment_date);
+    }
+
+    if (paymentData.variable_symbol !== null) {
+      spaydAttributes.x = {
+        vs: paymentData.variable_symbol.toString(),
+      };
+    }
+
+    return spaydAttributes;
+  };
+
+  const processPaymentData = (paymentData: any): void => {
+    console.log('Parsed Payment Data:', paymentData);
+
+    if (!validateBankInformation(paymentData)) {
+      return;
+    }
+
+    try {
+      const iban = buildIban(paymentData);
+      console.log('Generated IBAN:', iban.toString());
+
+      const spaydAttributes = buildSpaydAttributes(paymentData, iban.toString());
+      const spaydString = createShortPaymentDescriptor(spaydAttributes);
+      console.log('Generated SPAYD:', spaydString);
+    } catch (ibanError) {
+      console.error('Error creating IBAN or SPAYD:', ibanError);
+      const errorMsg = ibanError instanceof Error ? ibanError.message : 'Failed to generate IBAN or SPAYD';
+      setErrorMessage(`Error generating payment information: ${errorMsg}`);
+    }
+  };
+
+  const handleApiResponse = (response: any): void => {
+    if (response.error) {
+      console.error('Gemini API Error:', response.error);
+      const errorMsg = parseApiError(response.error);
+      setErrorMessage(errorMsg);
+      return;
+    }
+
+    console.log('Gemini API Response:', response.text);
+    if (response.paymentData) {
+      processPaymentData(response.paymentData);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!apiKey || !paymentText) {
       setShowValidation(true);
@@ -28,76 +118,7 @@ export const SimpleLayout: React.FC = () => {
     try {
       const geminiService = createGeminiService(apiKey);
       const response = await geminiService.generateContent(paymentText, selectedModel);
-
-      if (response.error) {
-        console.error('Gemini API Error:', response.error);
-        let errorMsg: string;
-        try {
-          const errorObj = JSON.parse(response.error)
-          errorMsg = errorObj?.error?.message || errorObj?.message || response.error;
-        } catch {
-          errorMsg = response.error;
-        }
-
-        setErrorMessage(errorMsg);
-        return
-      }
-
-      console.log('Gemini API Response:', response.text);
-      if (response.paymentData) {
-        console.log('Parsed Payment Data:', response.paymentData);
-
-        if (!response.paymentData.account_number || !response.paymentData.bank_code) {
-          setErrorMessage('Unable to find bank information (account number or bank code) in the payment data.');
-          return;
-        }
-
-        try {
-          const iban = new IBANBuilder()
-            .countryCode(CountryCode.CZ)
-            .bankCode(response.paymentData.bank_code)
-            .accountNumber(response.paymentData.account_number)
-            .build();
-
-          console.log('Generated IBAN:', iban.toString());
-
-          const spaydAttributes: any = {
-            acc: iban.toString(),
-          };
-
-          if (response.paymentData.amount !== null) {
-            spaydAttributes.am = response.paymentData.amount.toFixed(2);
-          }
-
-          if (response.paymentData.currency) {
-            spaydAttributes.cc = response.paymentData.currency;
-          }
-
-          if (response.paymentData.message) {
-            spaydAttributes.msg = response.paymentData.message;
-          }
-
-          if (response.paymentData.payment_date) {
-            spaydAttributes.dt = new Date(response.paymentData.payment_date);
-          }
-
-          if (response.paymentData.variable_symbol !== null) {
-            spaydAttributes.x = {
-              vs: response.paymentData.variable_symbol.toString(),
-            };
-          }
-
-          const spaydString = createShortPaymentDescriptor(spaydAttributes);
-          console.log('Generated SPAYD:', spaydString);
-
-        } catch (ibanError) {
-          console.error('Error creating IBAN or SPAYD:', ibanError);
-          const errorMsg = ibanError instanceof Error ? ibanError.message : 'Failed to generate IBAN or SPAYD';
-          setErrorMessage(`Error generating payment information: ${errorMsg}`);
-          return;
-        }
-      }
-
+      handleApiResponse(response);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
       const errorMsg = error instanceof Error ? error.message : 'An unknown error occurred';
