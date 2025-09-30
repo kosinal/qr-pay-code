@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { PaymentData } from '../types/paymentData';
+import type {PaymentData} from '../types/paymentData';
 
 export interface GeminiResponse {
   text: string;
