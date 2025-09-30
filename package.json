@@ -12,10 +12,12 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@google/genai": "^1.21.0",
     "@spayd/core": "^0.0.3",
     "@types/node": "^24.5.2",
     "add": "^2.0.6",
     "bootstrap": "^5.3.3",
+    "ibankit": "^1.6.5",
     "openai": "^5.23.0",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
