@@ -28,7 +28,7 @@ describe('GeminiService', () => {
   });
 
   describe('generateContent', () => {
-    it('returns text response on successful API call', async () => {
+    it('returns text response with prompt template applied', async () => {
       const mockText = 'Generated response text';
 
       mockGenerateContent.mockResolvedValue({
@@ -45,10 +45,11 @@ describe('GeminiService', () => {
 
       const result = await geminiService.generateContent(mockPrompt);
 
-      expect(mockGenerateContent).toHaveBeenCalledWith({
-        model: 'gemini-2.5-flash',
-        contents: mockPrompt
-      });
+      expect(mockGenerateContent).toHaveBeenCalled();
+      const callArgs = mockGenerateContent.mock.calls[0][0];
+      expect(callArgs.model).toBe('gemini-2.5-flash');
+      expect(callArgs.contents).toContain(mockPrompt);
+      expect(callArgs.contents).toContain('banking information');
       expect(result).toEqual({ text: mockText });
       expect(result.error).toBeUndefined();
     });
@@ -105,10 +106,11 @@ describe('GeminiService', () => {
 
       const result = await geminiService.generateContent(mockPrompt, customModel);
 
-      expect(mockGenerateContent).toHaveBeenCalledWith({
-        model: customModel,
-        contents: mockPrompt
-      });
+      expect(mockGenerateContent).toHaveBeenCalled();
+      const callArgs = mockGenerateContent.mock.calls[0][0];
+      expect(callArgs.model).toBe(customModel);
+      expect(callArgs.contents).toContain(mockPrompt);
+      expect(callArgs.contents).toContain('banking information');
       expect(result).toEqual({ text: mockText });
     });
 
@@ -129,10 +131,10 @@ describe('GeminiService', () => {
 
       await geminiService.generateContent(mockPrompt);
 
-      expect(mockGenerateContent).toHaveBeenCalledWith({
-        model: 'gemini-2.5-flash',
-        contents: mockPrompt
-      });
+      expect(mockGenerateContent).toHaveBeenCalled();
+      const callArgs = mockGenerateContent.mock.calls[0][0];
+      expect(callArgs.model).toBe('gemini-2.5-flash');
+      expect(callArgs.contents).toContain(mockPrompt);
     });
   });
 

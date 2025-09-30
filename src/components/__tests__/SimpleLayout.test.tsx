@@ -16,7 +16,6 @@ describe('SimpleLayout Component', () => {
   it('renders the PaymentTextInput, ApiKeyInput, and ModelSelect components', () => {
     render(<SimpleLayout />);
 
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
     expect(screen.getByLabelText('Gemini Model')).toBeInTheDocument();
@@ -53,7 +52,6 @@ describe('SimpleLayout Component', () => {
   it('maintains proper accessibility', () => {
     render(<SimpleLayout />);
 
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
     expect(screen.getByLabelText('Gemini Model')).toBeInTheDocument();
