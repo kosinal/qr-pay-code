@@ -1,7 +1,9 @@
 import { GoogleGenAI } from '@google/genai';
+import { PaymentData } from '../types/paymentData';
 
 export interface GeminiResponse {
   text: string;
+  paymentData?: PaymentData;
   error?: string;
 }
 
@@ -75,7 +77,21 @@ export class GeminiService {
 
       const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-      return { text };
+      // Parse JSON response
+      let paymentData: PaymentData | undefined;
+      if (text) {
+        try {
+          // Extract JSON from markdown code blocks if present
+          const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
+          const jsonString = jsonMatch ? jsonMatch[1] : text;
+
+          paymentData = JSON.parse(jsonString.trim()) as PaymentData;
+        } catch (parseError) {
+          console.warn('Failed to parse payment data from response:', parseError);
+        }
+      }
+
+      return { text, paymentData };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       return {

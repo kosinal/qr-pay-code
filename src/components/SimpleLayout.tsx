@@ -29,6 +29,9 @@ export const SimpleLayout: React.FC = () => {
         console.error('Gemini API Error:', response.error);
       } else {
         console.log('Gemini API Response:', response.text);
+        if (response.paymentData) {
+          console.log('Parsed Payment Data:', response.paymentData);
+        }
       }
     } catch (error) {
       console.error('Error calling Gemini API:', error);
