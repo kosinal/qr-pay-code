@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ModelSelect, type GeminiModel } from '../ModelSelect';
+import { ModelSelect } from '../ModelSelect';
 
 describe('ModelSelect Component', () => {
   it('renders with default value', () => {
