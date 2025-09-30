@@ -12,10 +12,10 @@ export class GeminiService {
     this.genai = new GoogleGenAI({ apiKey });
   }
 
-  async generateContent(prompt: string): Promise<GeminiResponse> {
+  async generateContent(prompt: string, model: string = 'gemini-2.5-flash'): Promise<GeminiResponse> {
     try {
       const result = await this.genai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model,
         contents: prompt
       });
 

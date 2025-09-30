@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
+import { ModelSelect, type GeminiModel } from './ModelSelect';
 import { createGeminiService } from '../utils/geminiService';
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
   const [paymentText, setPaymentText] = useState('');
+  const [selectedModel, setSelectedModel] = useState<GeminiModel>('gemini-2.5-pro');
   const [showValidation, setShowValidation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +23,7 @@ export const SimpleLayout: React.FC = () => {
 
     try {
       const geminiService = createGeminiService(apiKey);
-      const response = await geminiService.generateContent(paymentText);
+      const response = await geminiService.generateContent(paymentText, selectedModel);
 
       if (response.error) {
         console.error('Gemini API Error:', response.error);
@@ -49,6 +51,11 @@ export const SimpleLayout: React.FC = () => {
                 }}
                 className="mb-4"
                 isInvalid={showValidation && !apiKey}
+              />
+              <ModelSelect
+                value={selectedModel}
+                onChange={setSelectedModel}
+                className="mb-4"
               />
               <PaymentTextInput
                 value={paymentText}

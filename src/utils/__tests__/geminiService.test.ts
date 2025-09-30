@@ -86,6 +86,54 @@ describe('GeminiService', () => {
 
       expect(result).toEqual({ text: '' });
     });
+
+    it('uses custom model when provided', async () => {
+      const mockText = 'Generated response text';
+      const customModel = 'gemini-2.5-pro';
+
+      mockGenerateContent.mockResolvedValue({
+        candidates: [
+          {
+            content: {
+              parts: [
+                { text: mockText }
+              ]
+            }
+          }
+        ]
+      });
+
+      const result = await geminiService.generateContent(mockPrompt, customModel);
+
+      expect(mockGenerateContent).toHaveBeenCalledWith({
+        model: customModel,
+        contents: mockPrompt
+      });
+      expect(result).toEqual({ text: mockText });
+    });
+
+    it('defaults to gemini-2.5-flash when no model provided', async () => {
+      const mockText = 'Generated response text';
+
+      mockGenerateContent.mockResolvedValue({
+        candidates: [
+          {
+            content: {
+              parts: [
+                { text: mockText }
+              ]
+            }
+          }
+        ]
+      });
+
+      await geminiService.generateContent(mockPrompt);
+
+      expect(mockGenerateContent).toHaveBeenCalledWith({
+        model: 'gemini-2.5-flash',
+        contents: mockPrompt
+      });
+    });
   });
 
   describe('createGeminiService', () => {

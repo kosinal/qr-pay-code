@@ -13,12 +13,13 @@ describe('SimpleLayout Component', () => {
     vi.clearAllMocks();
   });
 
-  it('renders the PaymentTextInput and ApiKeyInput components', () => {
+  it('renders the PaymentTextInput, ApiKeyInput, and ModelSelect components', () => {
     render(<SimpleLayout />);
 
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
+    expect(screen.getByLabelText('Gemini Model')).toBeInTheDocument();
   });
 
   it('renders submit button', () => {
@@ -55,6 +56,7 @@ describe('SimpleLayout Component', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
+    expect(screen.getByLabelText('Gemini Model')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
   });
 
@@ -68,7 +70,7 @@ describe('SimpleLayout Component', () => {
     expect(screen.getByText('Payment text is required')).toBeInTheDocument();
   });
 
-  it('calls Gemini API and logs response when submitting with valid data', async () => {
+  it('calls Gemini API with default model and logs response when submitting with valid data', async () => {
     const mockGenerateContent = vi.fn().mockResolvedValue({
       text: 'Gemini API response',
       error: undefined
@@ -90,12 +92,43 @@ describe('SimpleLayout Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockGenerateContent).toHaveBeenCalledWith('Test payment text');
+      expect(mockGenerateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-pro');
       expect(consoleSpy).toHaveBeenCalledWith('Gemini API Response:', 'Gemini API response');
     });
 
     expect(screen.queryByText('API Key is required')).not.toBeInTheDocument();
     expect(screen.queryByText('Payment text is required')).not.toBeInTheDocument();
+
+    consoleSpy.mockRestore();
+  });
+
+  it('calls Gemini API with selected model when model is changed', async () => {
+    const mockGenerateContent = vi.fn().mockResolvedValue({
+      text: 'Gemini API response',
+      error: undefined
+    });
+
+    vi.mocked(geminiService.createGeminiService).mockReturnValue({
+      generateContent: mockGenerateContent
+    } as any);
+
+    const consoleSpy = vi.spyOn(console, 'log');
+    render(<SimpleLayout />);
+
+    const apiKeyInput = screen.getByLabelText('API Key');
+    const modelSelect = screen.getByLabelText('Gemini Model');
+    const textarea = screen.getByRole('textbox');
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+    fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+    fireEvent.change(modelSelect, { target: { value: 'gemini-2.5-flash' } });
+    fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockGenerateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-flash');
+      expect(consoleSpy).toHaveBeenCalledWith('Gemini API Response:', 'Gemini API response');
+    });
 
     consoleSpy.mockRestore();
   });
