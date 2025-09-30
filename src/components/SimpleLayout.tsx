@@ -2,20 +2,37 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
+import { createGeminiService } from '../utils/geminiService';
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
   const [paymentText, setPaymentText] = useState('');
   const [showValidation, setShowValidation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!apiKey || !paymentText) {
       setShowValidation(true);
       return;
     }
 
-    console.log(paymentText);
     setShowValidation(false);
+    setIsLoading(true);
+
+    try {
+      const geminiService = createGeminiService(apiKey);
+      const response = await geminiService.generateContent(paymentText);
+
+      if (response.error) {
+        console.error('Gemini API Error:', response.error);
+      } else {
+        console.log('Gemini API Response:', response.text);
+      }
+    } catch (error) {
+      console.error('Error calling Gemini API:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,8 +59,9 @@ export const SimpleLayout: React.FC = () => {
                 <Button
                   variant="primary"
                   onClick={handleSubmit}
+                  disabled={isLoading}
                 >
-                  Submit
+                  {isLoading ? 'Processing...' : 'Submit'}
                 </Button>
               </div>
             </Card.Body>

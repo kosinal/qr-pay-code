@@ -1,6 +1,11 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SimpleLayout } from '../SimpleLayout';
+import * as geminiService from '../../utils/geminiService';
+
+vi.mock('../../utils/geminiService', () => ({
+  createGeminiService: vi.fn()
+}));
 
 describe('SimpleLayout Component', () => {
   beforeEach(() => {
@@ -63,7 +68,16 @@ describe('SimpleLayout Component', () => {
     expect(screen.getByText('Payment text is required')).toBeInTheDocument();
   });
 
-  it('logs payment text when submitting with valid data', () => {
+  it('calls Gemini API and logs response when submitting with valid data', async () => {
+    const mockGenerateContent = vi.fn().mockResolvedValue({
+      text: 'Gemini API response',
+      error: undefined
+    });
+
+    vi.mocked(geminiService.createGeminiService).mockReturnValue({
+      generateContent: mockGenerateContent
+    } as any);
+
     const consoleSpy = vi.spyOn(console, 'log');
     render(<SimpleLayout />);
 
@@ -75,11 +89,69 @@ describe('SimpleLayout Component', () => {
     fireEvent.change(textarea, { target: { value: 'Test payment text' } });
     fireEvent.click(submitButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Test payment text');
+    await waitFor(() => {
+      expect(mockGenerateContent).toHaveBeenCalledWith('Test payment text');
+      expect(consoleSpy).toHaveBeenCalledWith('Gemini API Response:', 'Gemini API response');
+    });
+
     expect(screen.queryByText('API Key is required')).not.toBeInTheDocument();
     expect(screen.queryByText('Payment text is required')).not.toBeInTheDocument();
 
     consoleSpy.mockRestore();
+  });
+
+  it('shows loading state during API call', async () => {
+    const mockGenerateContent = vi.fn().mockImplementation(() =>
+      new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
+    );
+
+    vi.mocked(geminiService.createGeminiService).mockReturnValue({
+      generateContent: mockGenerateContent
+    } as any);
+
+    render(<SimpleLayout />);
+
+    const apiKeyInput = screen.getByLabelText('API Key');
+    const textarea = screen.getByRole('textbox');
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+    fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+    fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+    fireEvent.click(submitButton);
+
+    expect(screen.getByRole('button', { name: 'Processing...' })).toBeDisabled();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Submit' })).not.toBeDisabled();
+    });
+  });
+
+  it('logs error when Gemini API returns error', async () => {
+    const mockGenerateContent = vi.fn().mockResolvedValue({
+      text: '',
+      error: 'API Error'
+    });
+
+    vi.mocked(geminiService.createGeminiService).mockReturnValue({
+      generateContent: mockGenerateContent
+    } as any);
+
+    const consoleErrorSpy = vi.spyOn(console, 'error');
+    render(<SimpleLayout />);
+
+    const apiKeyInput = screen.getByLabelText('API Key');
+    const textarea = screen.getByRole('textbox');
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+    fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+    fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Gemini API Error:', 'API Error');
+    });
+
+    consoleErrorSpy.mockRestore();
   });
 
   it('does not show validation errors initially', () => {
