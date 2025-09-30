@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
 import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
@@ -11,6 +11,7 @@ export const SimpleLayout: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<GeminiModel>('gemini-2.5-pro');
   const [showValidation, setShowValidation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!apiKey || !paymentText) {
@@ -19,6 +20,7 @@ export const SimpleLayout: React.FC = () => {
     }
 
     setShowValidation(false);
+    setErrorMessage(null);
     setIsLoading(true);
 
     try {
@@ -27,6 +29,19 @@ export const SimpleLayout: React.FC = () => {
 
       if (response.error) {
         console.error('Gemini API Error:', response.error);
+
+        // Extract message from nested error object
+        let errorMsg = 'An error occurred';
+        try {
+          const errorObj = typeof response.error === 'string'
+            ? JSON.parse(response.error)
+            : response.error;
+          errorMsg = errorObj?.error?.message || errorObj?.message || response.error;
+        } catch {
+          errorMsg = response.error;
+        }
+
+        setErrorMessage(errorMsg);
       } else {
         console.log('Gemini API Response:', response.text);
         if (response.paymentData) {
@@ -35,6 +50,8 @@ export const SimpleLayout: React.FC = () => {
       }
     } catch (error) {
       console.error('Error calling Gemini API:', error);
+      const errorMsg = error instanceof Error ? error.message : 'An unknown error occurred';
+      setErrorMessage(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -44,6 +61,11 @@ export const SimpleLayout: React.FC = () => {
     <Container className="simple-layout py-4">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
+          {errorMessage && (
+            <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
+              {errorMessage}
+            </Alert>
+          )}
           <Card>
             <Card.Body>
               <ApiKeyInput
