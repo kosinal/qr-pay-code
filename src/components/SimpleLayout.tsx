@@ -49,11 +49,11 @@ export const SimpleLayout: React.FC = () => {
   };
 
   const buildIban = (paymentData: any) => {
-    const fullAccountNumber = paymentData.branch_code + paymentData.account_number;
     return new IBANBuilder()
       .countryCode(CountryCode.CZ)
       .bankCode(paymentData.bank_code)
-      .accountNumber(fullAccountNumber)
+      .accountNumber(paymentData.account_number)
+      .branchCode(paymentData.branch_code)
       .build();
   };
 
