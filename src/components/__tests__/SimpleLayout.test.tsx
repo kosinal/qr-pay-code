@@ -191,4 +191,170 @@ describe('SimpleLayout Component', () => {
     expect(screen.queryByText('API Key is required')).not.toBeInTheDocument();
     expect(screen.queryByText('Payment text is required')).not.toBeInTheDocument();
   });
+
+  describe('IBAN Generation with Branch Code', () => {
+    it('generates correct IBAN for account with branch code', async () => {
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '123456-7890',
+          bank_code: '0800',
+          amount: 1000,
+          currency: 'CZK',
+          message: 'Test payment',
+          payment_date: null,
+          variable_symbol: null
+        }
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      const consoleSpy = vi.spyOn(console, 'log');
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const ibanCalls = consoleSpy.mock.calls.filter(call =>
+          call[0] === 'Generated IBAN:' && typeof call[1] === 'string'
+        );
+        expect(ibanCalls.length).toBeGreaterThan(0);
+        const generatedIban = ibanCalls[0][1];
+        expect(generatedIban).toContain('1234560000007890');
+      });
+
+      consoleSpy.mockRestore();
+    });
+
+    it('generates correct IBAN for account without branch code', async () => {
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '1234567890',
+          bank_code: '0800',
+          amount: 500,
+          currency: 'CZK',
+          message: null,
+          payment_date: null,
+          variable_symbol: null
+        }
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      const consoleSpy = vi.spyOn(console, 'log');
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const ibanCalls = consoleSpy.mock.calls.filter(call =>
+          call[0] === 'Generated IBAN:' && typeof call[1] === 'string'
+        );
+        expect(ibanCalls.length).toBeGreaterThan(0);
+        const generatedIban = ibanCalls[0][1];
+        expect(generatedIban).toContain('0000001234567890');
+      });
+
+      consoleSpy.mockRestore();
+    });
+
+    it('generates correct IBAN for short account with branch code', async () => {
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '123-45',
+          bank_code: '0800',
+          amount: 250,
+          currency: 'CZK',
+          message: 'Short account test',
+          payment_date: null,
+          variable_symbol: 12345
+        }
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      const consoleSpy = vi.spyOn(console, 'log');
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const ibanCalls = consoleSpy.mock.calls.filter(call =>
+          call[0] === 'Generated IBAN:' && typeof call[1] === 'string'
+        );
+        expect(ibanCalls.length).toBeGreaterThan(0);
+        const generatedIban = ibanCalls[0][1];
+        expect(generatedIban).toContain('0001230000000045');
+      });
+
+      consoleSpy.mockRestore();
+    });
+
+    it('handles minimal branch code correctly', async () => {
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '1-999',
+          bank_code: '0800',
+          amount: 100,
+          currency: 'CZK',
+          message: null,
+          payment_date: null,
+          variable_symbol: null
+        }
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      const consoleSpy = vi.spyOn(console, 'log');
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const ibanCalls = consoleSpy.mock.calls.filter(call =>
+          call[0] === 'Generated IBAN:' && typeof call[1] === 'string'
+        );
+        expect(ibanCalls.length).toBeGreaterThan(0);
+        const generatedIban = ibanCalls[0][1];
+        expect(generatedIban).toContain('0000010000000999');
+      });
+
+      consoleSpy.mockRestore();
+    });
+  });
 });

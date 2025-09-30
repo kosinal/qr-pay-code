@@ -32,11 +32,28 @@ export const SimpleLayout: React.FC = () => {
     return true;
   };
 
+  const processAccountNumber = (accountNumber: string): { account: string; branch: string } => {
+    let account = accountNumber;
+    let branch = '000000';
+
+    if (accountNumber.includes('-')) {
+      const parts = accountNumber.split('-');
+      branch = parts[0];
+      account = parts[1];
+    }
+
+    account = account.padStart(10, '0');
+    branch = branch.padStart(6, '0');
+
+    return { account, branch };
+  };
+
   const buildIban = (paymentData: any) => {
+    const fullAccountNumber = paymentData.branch_code + paymentData.account_number;
     return new IBANBuilder()
       .countryCode(CountryCode.CZ)
       .bankCode(paymentData.bank_code)
-      .accountNumber(paymentData.account_number)
+      .accountNumber(fullAccountNumber)
       .build();
   };
 
@@ -76,6 +93,10 @@ export const SimpleLayout: React.FC = () => {
     if (!validateBankInformation(paymentData)) {
       return;
     }
+
+    const { account, branch } = processAccountNumber(paymentData.account_number);
+    paymentData.account_number = account;
+    paymentData.branch_code = branch;
 
     try {
       const iban = buildIban(paymentData);
