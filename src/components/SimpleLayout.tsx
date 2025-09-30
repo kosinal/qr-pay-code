@@ -4,6 +4,8 @@ import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
 import { createGeminiService } from '../utils/geminiService';
+import { IBANBuilder, CountryCode } from 'ibankit';
+import { createShortPaymentDescriptor } from '@spayd/core';
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
@@ -44,6 +46,56 @@ export const SimpleLayout: React.FC = () => {
       console.log('Gemini API Response:', response.text);
       if (response.paymentData) {
         console.log('Parsed Payment Data:', response.paymentData);
+
+        if (!response.paymentData.account_number || !response.paymentData.bank_code) {
+          setErrorMessage('Unable to find bank information (account number or bank code) in the payment data.');
+          return;
+        }
+
+        try {
+          const iban = new IBANBuilder()
+            .countryCode(CountryCode.CZ)
+            .bankCode(response.paymentData.bank_code)
+            .accountNumber(response.paymentData.account_number)
+            .build();
+
+          console.log('Generated IBAN:', iban.toString());
+
+          const spaydAttributes: any = {
+            acc: iban.toString(),
+          };
+
+          if (response.paymentData.amount !== null) {
+            spaydAttributes.am = response.paymentData.amount.toFixed(2);
+          }
+
+          if (response.paymentData.currency) {
+            spaydAttributes.cc = response.paymentData.currency;
+          }
+
+          if (response.paymentData.message) {
+            spaydAttributes.msg = response.paymentData.message;
+          }
+
+          if (response.paymentData.payment_date) {
+            spaydAttributes.dt = new Date(response.paymentData.payment_date);
+          }
+
+          if (response.paymentData.variable_symbol !== null) {
+            spaydAttributes.x = {
+              vs: response.paymentData.variable_symbol.toString(),
+            };
+          }
+
+          const spaydString = createShortPaymentDescriptor(spaydAttributes);
+          console.log('Generated SPAYD:', spaydString);
+
+        } catch (ibanError) {
+          console.error('Error creating IBAN or SPAYD:', ibanError);
+          const errorMsg = ibanError instanceof Error ? ibanError.message : 'Failed to generate IBAN or SPAYD';
+          setErrorMessage(`Error generating payment information: ${errorMsg}`);
+          return;
+        }
       }
 
     } catch (error) {
