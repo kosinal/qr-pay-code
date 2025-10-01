@@ -16,9 +16,9 @@ describe('SimpleLayout Component', () => {
   it('renders the PaymentTextInput, ApiKeyInput, and ModelSelect components', () => {
     render(<SimpleLayout />);
 
-    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
     expect(screen.getByLabelText('Gemini Model')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('renders submit button', () => {
@@ -52,10 +52,10 @@ describe('SimpleLayout Component', () => {
   it('maintains proper accessibility', () => {
     render(<SimpleLayout />);
 
-    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
     expect(screen.getByLabelText('Gemini Model')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('shows validation errors when submitting with empty fields', () => {
@@ -405,7 +405,7 @@ describe('SimpleLayout Component', () => {
       });
     });
 
-    it('disables PaymentTextInput clear button when isLoading is true', async () => {
+    it('disables PaymentTextInput textarea when isLoading is true', async () => {
       const mockGenerateContent = vi.fn().mockImplementation(() =>
         new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
       );
@@ -423,8 +423,7 @@ describe('SimpleLayout Component', () => {
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
 
-      const clearButton = screen.getByRole('button', { name: 'Clear' });
-      expect(clearButton).not.toBeDisabled();
+      expect(textarea).not.toBeDisabled();
 
       fireEvent.click(submitButton);
 
@@ -432,7 +431,7 @@ describe('SimpleLayout Component', () => {
         expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
       });
 
-      expect(clearButton).toBeDisabled();
+      expect(textarea).toBeDisabled();
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();

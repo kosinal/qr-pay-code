@@ -166,7 +166,7 @@ export const SimpleLayout: React.FC = () => {
           )}
           <Card className="mb-3">
               <Card.Body>
-                  <QRCodeDisplay spaydString={spaydString}/>
+                  <QRCodeDisplay spaydString={spaydString} className="mb-4"/>
                   <PaymentTextInput
                       value={paymentText}
                       onChange={setPaymentText}

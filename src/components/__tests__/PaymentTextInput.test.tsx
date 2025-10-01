@@ -9,14 +9,12 @@ describe('PaymentTextInput Component', () => {
     mockOnChange.mockClear();
   });
 
-  it('renders correctly with textarea and buttons', () => {
+  it('renders correctly with textarea', () => {
     render(
       <PaymentTextInput onChange={mockOnChange} />
     );
 
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
-    expect(screen.getByText('0 characters')).toBeInTheDocument();
   });
 
   it('displays placeholder text', () => {
@@ -28,15 +26,15 @@ describe('PaymentTextInput Component', () => {
     expect(textarea).toHaveAttribute('placeholder', expect.stringContaining('Enter payment information'));
   });
 
-  it('updates character counter when text is entered', () => {
+  it('updates text when text is entered', () => {
     render(
       <PaymentTextInput onChange={mockOnChange} />
     );
 
-    const textarea = screen.getByRole('textbox');
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
     fireEvent.input(textarea, { target: { value: 'Test payment info' } });
 
-    expect(screen.getByText('17 characters')).toBeInTheDocument();
+    expect(textarea).toHaveValue('Test payment info');
   });
 
   it('calls onChange with updated text', () => {
@@ -52,36 +50,6 @@ describe('PaymentTextInput Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
-  it('clears text when clear button is clicked', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
-
-    const textarea = screen.getByRole('textbox');
-    const clearButton = screen.getByRole('button', { name: 'Clear' });
-
-    fireEvent.input(textarea, { target: { value: 'Test text to clear' } });
-    expect(screen.getByText('18 characters')).toBeInTheDocument();
-
-    fireEvent.click(clearButton);
-
-    expect(textarea).toHaveValue('');
-    expect(screen.getByText('0 characters')).toBeInTheDocument();
-    expect(mockOnChange).toHaveBeenCalledWith('');
-  });
-
-  it('disables clear button when textarea is empty', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
-
-    const clearButton = screen.getByRole('button', { name: 'Clear' });
-    expect(clearButton).toBeDisabled();
-
-    const textarea = screen.getByRole('textbox');
-    fireEvent.input(textarea, { target: { value: 'some text' } });
-    expect(clearButton).not.toBeDisabled();
-  });
 
   it('handles empty text correctly', () => {
     render(
@@ -97,7 +65,7 @@ describe('PaymentTextInput Component', () => {
 
     fireEvent.change(textarea, { target: { value: '' } });
 
-    expect(screen.getByText('0 characters')).toBeInTheDocument();
+    expect(textarea).toHaveValue('');
     expect(mockOnChange).toHaveBeenCalledWith('');
   });
 
@@ -106,11 +74,11 @@ describe('PaymentTextInput Component', () => {
       <PaymentTextInput onChange={mockOnChange} />
     );
 
-    const textarea = screen.getByRole('textbox');
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
     const specialText = 'Amount: $100.00\nCurrency: USD\nRecipient: John Smith\nDescription: Invoice #12345';
     fireEvent.input(textarea, { target: { value: specialText } });
 
-    expect(screen.getByText(`${specialText.length} characters`)).toBeInTheDocument();
+    expect(textarea).toHaveValue(specialText);
     expect(mockOnChange).toHaveBeenCalledWith(specialText);
   });
 
@@ -119,11 +87,11 @@ describe('PaymentTextInput Component', () => {
       <PaymentTextInput onChange={mockOnChange} />
     );
 
-    const textarea = screen.getByRole('textbox');
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
     const longText = 'A'.repeat(1000);
     fireEvent.input(textarea, { target: { value: longText } });
 
-    expect(screen.getByText('1000 characters')).toBeInTheDocument();
+    expect(textarea).toHaveValue(longText);
     expect(mockOnChange).toHaveBeenCalledWith(longText);
   });
 
@@ -157,19 +125,6 @@ describe('PaymentTextInput Component', () => {
     expect(textarea).toBeDisabled();
   });
 
-  it('disables clear button when disabled prop is true', () => {
-    render(<PaymentTextInput value="some text" disabled={true} onChange={mockOnChange} />);
-
-    const clearButton = screen.getByRole('button', { name: 'Clear' });
-    expect(clearButton).toBeDisabled();
-  });
-
-  it('disables clear button when disabled and no value', () => {
-    render(<PaymentTextInput disabled={true} onChange={mockOnChange} />);
-
-    const clearButton = screen.getByRole('button', { name: 'Clear' });
-    expect(clearButton).toBeDisabled();
-  });
 
   it('allows interaction when disabled prop is false', () => {
     render(<PaymentTextInput disabled={false} onChange={mockOnChange} />);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 
 interface PaymentTextInputProps {
   value?: string;
@@ -26,13 +26,6 @@ export const PaymentTextInput: React.FC<PaymentTextInputProps> = ({
     onChange?.(newValue);
   };
 
-  const handleClear = () => {
-    if (externalValue === undefined) {
-      setPaymentText('');
-    }
-    onChange?.('');
-  };
-
   return (
     <Form.Group className="payment-text-input">
       <Form.Control
@@ -52,18 +45,6 @@ Reference: INV-001`}
         isInvalid={isInvalid}
         disabled={disabled}
       />
-      <div className="d-flex justify-content-between align-items-center mt-2">
-        <Button
-          variant="outline-secondary"
-          onClick={handleClear}
-          disabled={!value || disabled}
-        >
-          Clear
-        </Button>
-        <span className="text-muted">
-          {value.length} characters
-        </span>
-      </div>
       {isInvalid && (
         <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
           Payment text is required
