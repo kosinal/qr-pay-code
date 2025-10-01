@@ -90,8 +90,6 @@ export const SimpleLayout: React.FC = () => {
   };
 
   const processPaymentData = (paymentData: any): void => {
-    console.log('Parsed Payment Data:', paymentData);
-
     if (!validateBankInformation(paymentData)) {
       return;
     }
@@ -103,17 +101,14 @@ export const SimpleLayout: React.FC = () => {
     try {
       const iban = buildIban(paymentData);
       const ibanString = iban.toString();
-      console.log('Generated IBAN:', ibanString);
 
       try {
         const spaydAttributes = buildSpaydAttributes(paymentData, ibanString);
         const generatedSpayd = createShortPaymentDescriptor(spaydAttributes);
-        console.log('Generated SPAYD:', generatedSpayd);
         setSpaydString(generatedSpayd);
       } catch (spaydError) {
         console.error('Error creating SPAYD:', spaydError);
         const fallbackSpayd = `SPD*1.0*ACC:${ibanString}${paymentData.amount ? `*AM:${paymentData.amount.toFixed(2)}` : ''}${paymentData.currency ? `*CC:${paymentData.currency}` : ''}`;
-        console.log('Using fallback SPAYD:', fallbackSpayd);
         setSpaydString(fallbackSpayd);
       }
     } catch (ibanError) {
@@ -131,7 +126,6 @@ export const SimpleLayout: React.FC = () => {
       return;
     }
 
-    console.log('Gemini API Response:', response.text);
     if (response.paymentData) {
       processPaymentData(response.paymentData);
     }
