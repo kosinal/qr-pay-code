@@ -164,7 +164,7 @@ export const SimpleLayout: React.FC = () => {
               {errorMessage}
             </Alert>
           )}
-          <Card className="mb-3">
+          <Card className="mb-3" style={{ backgroundColor: 'rgba(45, 45, 45, 0.85)' }}>
               <Card.Body>
                   <QRCodeDisplay spaydString={spaydString} className="mb-4"/>
                   <PaymentTextInput

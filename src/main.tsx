@@ -4,14 +4,13 @@ import { SimpleLayout } from './components/SimpleLayout';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import './theme.css';
-import './app.css';
 
 const PaymentApp: React.FC = () => {
 
   return (
     <div className="payment-app">
       <h1>QR Code Payment Generator</h1>
-      <p>Enter payment information in the text area below:</p>
+      <span style={{ marginBottom: '0.5rem', display: 'block' }}>Enter payment information in the text area below:</span>
       <SimpleLayout />
     </div>
   );
