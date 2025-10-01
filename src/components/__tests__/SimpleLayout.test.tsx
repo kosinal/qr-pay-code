@@ -471,4 +471,88 @@ describe('SimpleLayout Component', () => {
       });
     });
   });
+
+  describe('QR Code Display Integration', () => {
+    it('does not show QR code initially', () => {
+      render(<SimpleLayout />);
+
+      const qrCode = screen.queryByTestId('qr-code');
+      expect(qrCode).not.toBeInTheDocument();
+    });
+
+    it('displays QR code after successful SPAYD generation', async () => {
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '1234567890',
+          bank_code: '0800',
+          amount: 500,
+          currency: 'CZK',
+          message: null,
+          payment_date: null,
+          variable_symbol: null
+        }
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const qrCode = screen.queryByTestId('qr-code');
+        expect(qrCode).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Payment QR Code')).toBeInTheDocument();
+      expect(screen.getByText('Scan this QR code to make the payment')).toBeInTheDocument();
+    });
+
+    it('QR code component is rendered in layout', async () => {
+      const mockGenerateContent = vi.fn().mockResolvedValue({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '1234567890',
+          bank_code: '0800',
+          amount: 500,
+          currency: 'CZK',
+          message: null,
+          payment_date: null,
+          variable_symbol: null
+        }
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      const { container } = render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const qrCode = screen.queryByTestId('qr-code');
+        expect(qrCode).toBeInTheDocument();
+      });
+
+      const qrCodeDisplay = container.querySelector('.qr-code-display');
+      expect(qrCodeDisplay).toBeInTheDocument();
+      expect(screen.getByText('Payment QR Code')).toBeInTheDocument();
+    });
+  });
 });

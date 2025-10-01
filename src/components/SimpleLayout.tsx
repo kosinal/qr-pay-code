@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
 import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
+import { QRCodeDisplay } from './QRCodeDisplay';
 import { createGeminiService } from '../utils/geminiService';
 import { IBANBuilder, CountryCode } from 'ibankit';
 import { createShortPaymentDescriptor } from '@spayd/core';
@@ -14,6 +15,7 @@ export const SimpleLayout: React.FC = () => {
   const [showValidation, setShowValidation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [spaydString, setSpaydString] = useState<string | null>(null);
 
   const parseApiError = (error: string): string => {
     try {
@@ -103,12 +105,20 @@ export const SimpleLayout: React.FC = () => {
       const ibanString = iban.toString();
       console.log('Generated IBAN:', ibanString);
 
-      const spaydAttributes = buildSpaydAttributes(paymentData, ibanString);
-      const spaydString = createShortPaymentDescriptor(spaydAttributes);
-      console.log('Generated SPAYD:', spaydString);
+      try {
+        const spaydAttributes = buildSpaydAttributes(paymentData, ibanString);
+        const generatedSpayd = createShortPaymentDescriptor(spaydAttributes);
+        console.log('Generated SPAYD:', generatedSpayd);
+        setSpaydString(generatedSpayd);
+      } catch (spaydError) {
+        console.error('Error creating SPAYD:', spaydError);
+        const fallbackSpayd = `SPD*1.0*ACC:${ibanString}${paymentData.amount ? `*AM:${paymentData.amount.toFixed(2)}` : ''}${paymentData.currency ? `*CC:${paymentData.currency}` : ''}`;
+        console.log('Using fallback SPAYD:', fallbackSpayd);
+        setSpaydString(fallbackSpayd);
+      }
     } catch (ibanError) {
-      console.error('Error creating IBAN or SPAYD:', ibanError);
-      const errorMsg = ibanError instanceof Error ? ibanError.message : 'Failed to generate IBAN or SPAYD';
+      console.error('Error creating IBAN:', ibanError);
+      const errorMsg = ibanError instanceof Error ? ibanError.message : 'Failed to generate IBAN';
       setErrorMessage(`Error generating payment information: ${errorMsg}`);
     }
   };
@@ -159,6 +169,7 @@ export const SimpleLayout: React.FC = () => {
               {errorMessage}
             </Alert>
           )}
+          <QRCodeDisplay spaydString={spaydString} className="mb-3" />
           <Card>
             <Card.Body>
               <ApiKeyInput
