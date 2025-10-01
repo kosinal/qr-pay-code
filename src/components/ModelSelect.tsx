@@ -17,7 +17,9 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
   disabled = false
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange?.(event.target.value as GeminiModel);
+    if (!disabled) {
+      onChange?.(event.target.value as GeminiModel);
+    }
   };
 
   return (

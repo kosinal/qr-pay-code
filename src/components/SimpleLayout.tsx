@@ -100,9 +100,10 @@ export const SimpleLayout: React.FC = () => {
 
     try {
       const iban = buildIban(paymentData);
-      console.log('Generated IBAN:', iban.toString());
+      const ibanString = iban.toString();
+      console.log('Generated IBAN:', ibanString);
 
-      const spaydAttributes = buildSpaydAttributes(paymentData, iban.toString());
+      const spaydAttributes = buildSpaydAttributes(paymentData, ibanString);
       const spaydString = createShortPaymentDescriptor(spaydAttributes);
       console.log('Generated SPAYD:', spaydString);
     } catch (ibanError) {
