@@ -6,12 +6,14 @@ interface PaymentTextInputProps {
   value?: string;
   onChange?: (text: string) => void;
   isInvalid?: boolean;
+  disabled?: boolean;
 }
 
 export const PaymentTextInput: React.FC<PaymentTextInputProps> = ({
   value: externalValue,
   onChange,
-  isInvalid = false
+  isInvalid = false,
+  disabled = false
 }) => {
   const [paymentText, setPaymentText] = useState('');
   const value = externalValue !== undefined ? externalValue : paymentText;
@@ -48,12 +50,13 @@ Reference: INV-001`}
         rows={8}
         className="payment-textarea"
         isInvalid={isInvalid}
+        disabled={disabled}
       />
       <div className="d-flex justify-content-between align-items-center mt-2">
         <Button
           variant="outline-secondary"
           onClick={handleClear}
-          disabled={!value}
+          disabled={!value || disabled}
         >
           Clear
         </Button>

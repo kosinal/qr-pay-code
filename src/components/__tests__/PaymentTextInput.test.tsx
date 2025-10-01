@@ -149,4 +149,35 @@ describe('PaymentTextInput Component', () => {
 
     expect(textarea).toHaveValue('Updated value');
   });
+
+  it('disables textarea when disabled prop is true', () => {
+    render(<PaymentTextInput disabled={true} onChange={mockOnChange} />);
+
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
+    expect(textarea).toBeDisabled();
+  });
+
+  it('disables clear button when disabled prop is true', () => {
+    render(<PaymentTextInput value="some text" disabled={true} onChange={mockOnChange} />);
+
+    const clearButton = screen.getByRole('button', { name: 'Clear' });
+    expect(clearButton).toBeDisabled();
+  });
+
+  it('disables clear button when disabled and no value', () => {
+    render(<PaymentTextInput disabled={true} onChange={mockOnChange} />);
+
+    const clearButton = screen.getByRole('button', { name: 'Clear' });
+    expect(clearButton).toBeDisabled();
+  });
+
+  it('allows interaction when disabled prop is false', () => {
+    render(<PaymentTextInput disabled={false} onChange={mockOnChange} />);
+
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
+    expect(textarea).not.toBeDisabled();
+
+    fireEvent.input(textarea, { target: { value: 'test' } });
+    expect(mockOnChange).toHaveBeenCalledWith('test');
+  });
 });

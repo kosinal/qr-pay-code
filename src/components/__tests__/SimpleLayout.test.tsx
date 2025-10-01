@@ -357,4 +357,118 @@ describe('SimpleLayout Component', () => {
       consoleSpy.mockRestore();
     });
   });
+
+  describe('Component Disabled State During Loading', () => {
+    it('disables all input components when isLoading is true', async () => {
+      const mockGenerateContent = vi.fn().mockImplementation(() =>
+        new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
+      );
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key') as HTMLInputElement;
+      const modelSelect = screen.getByLabelText('Gemini Model') as HTMLSelectElement;
+      const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      // Initially all components should be enabled
+      expect(apiKeyInput).not.toBeDisabled();
+      expect(modelSelect).not.toBeDisabled();
+      expect(textarea).not.toBeDisabled();
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      // During loading, all components should be disabled
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
+      });
+
+      expect(apiKeyInput).toBeDisabled();
+      expect(modelSelect).toBeDisabled();
+      expect(textarea).toBeDisabled();
+
+      // After loading completes, components should be enabled again
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+      });
+
+      expect(apiKeyInput).not.toBeDisabled();
+      expect(modelSelect).not.toBeDisabled();
+      expect(textarea).not.toBeDisabled();
+    });
+
+    it('disables ApiKeyInput buttons when isLoading is true', async () => {
+      const mockGenerateContent = vi.fn().mockImplementation(() =>
+        new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
+      );
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key') as HTMLInputElement;
+      const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
+      });
+
+      const showButton = screen.getByRole('button', { name: /show api key/i });
+      const clearButton = screen.getByRole('button', { name: /clear api key/i });
+
+      expect(showButton).toBeDisabled();
+      expect(clearButton).toBeDisabled();
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+      });
+    });
+
+    it('disables PaymentTextInput clear button when isLoading is true', async () => {
+      const mockGenerateContent = vi.fn().mockImplementation(() =>
+        new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
+      );
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue({
+        generateContent: mockGenerateContent
+      } as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key') as HTMLInputElement;
+      const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
+      const submitButton = screen.getByRole('button', { name: 'Submit' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+
+      const clearButton = screen.getByRole('button', { name: 'Clear' });
+      expect(clearButton).not.toBeDisabled();
+
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
+      });
+
+      expect(clearButton).toBeDisabled();
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+      });
+    });
+  });
 });

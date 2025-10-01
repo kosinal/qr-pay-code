@@ -10,13 +10,15 @@ interface ApiKeyInputProps {
   placeholder?: string;
   className?: string;
   isInvalid?: boolean;
+  disabled?: boolean;
 }
 
 export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
   onApiKeyChange,
   placeholder = "Enter your API key",
   className = "",
-  isInvalid = false
+  isInvalid = false,
+  disabled = false
 }) => {
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
@@ -63,11 +65,13 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
           className="api-key-input-field"
           aria-label="API Key"
           isInvalid={isInvalid}
+          disabled={disabled}
         />
         <Button
             variant="outline-secondary"
             onClick={() => setShowKey(!showKey)}
             aria-label={showKey ? "Hide API key" : "Show API key"}
+            disabled={disabled}
         >
           {showKey ? <FaEyeSlash /> : <FaEye />}
         </Button>
@@ -76,6 +80,7 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
                 variant="outline-danger"
                 onClick={clearApiKey}
             aria-label="Clear API key"
+            disabled={disabled}
           >
             <MdClear />
           </Button>

@@ -68,4 +68,35 @@ describe('ModelSelect Component', () => {
     const select = screen.getByLabelText('Gemini Model') as HTMLSelectElement;
     expect(select.value).toBe('gemini-2.5-pro');
   });
+
+  it('disables select when disabled prop is true', () => {
+    render(<ModelSelect disabled={true} />);
+
+    const select = screen.getByLabelText('Gemini Model') as HTMLSelectElement;
+    expect(select).toBeDisabled();
+  });
+
+  it('allows interaction when disabled prop is false', () => {
+    const handleChange = vi.fn();
+    render(<ModelSelect disabled={false} onChange={handleChange} />);
+
+    const select = screen.getByLabelText('Gemini Model') as HTMLSelectElement;
+    expect(select).not.toBeDisabled();
+
+    fireEvent.change(select, { target: { value: 'gemini-2.5-flash' } });
+    expect(handleChange).toHaveBeenCalledWith('gemini-2.5-flash');
+  });
+
+  it('prevents selection change when disabled', () => {
+    const handleChange = vi.fn();
+    render(<ModelSelect disabled={true} onChange={handleChange} />);
+
+    const select = screen.getByLabelText('Gemini Model') as HTMLSelectElement;
+
+    // Attempt to change value (should not work since disabled)
+    fireEvent.change(select, { target: { value: 'gemini-2.5-flash' } });
+
+    // onChange should not be called when disabled
+    expect(handleChange).not.toHaveBeenCalled();
+  });
 });

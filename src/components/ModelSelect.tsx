@@ -7,12 +7,14 @@ interface ModelSelectProps {
   value?: GeminiModel;
   onChange?: (model: GeminiModel) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const ModelSelect: React.FC<ModelSelectProps> = ({
   value = 'gemini-2.5-pro',
   onChange,
-  className = ''
+  className = '',
+  disabled = false
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onChange?.(event.target.value as GeminiModel);
@@ -28,6 +30,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
         value={value}
         onChange={handleChange}
         aria-label="Select Gemini model"
+        disabled={disabled}
       >
         <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
         <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>

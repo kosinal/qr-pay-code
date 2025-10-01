@@ -165,16 +165,19 @@ export const SimpleLayout: React.FC = () => {
                 onApiKeyChange={(key) => setApiKey(key)}
                 className="mb-4"
                 isInvalid={showValidation && !apiKey}
+                disabled={isLoading}
               />
               <ModelSelect
                 value={selectedModel}
                 onChange={setSelectedModel}
                 className="mb-4"
+                disabled={isLoading}
               />
               <PaymentTextInput
                 value={paymentText}
                 onChange={setPaymentText}
                 isInvalid={showValidation && !paymentText}
+                disabled={isLoading}
               />
               <div className="d-flex justify-content-end mt-3">
                 <Button

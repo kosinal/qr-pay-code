@@ -155,4 +155,39 @@ describe('ApiKeyInput Component', () => {
     expect(input.value).toBe(specialCharsKey);
     expect(localStorage.getItem('qr-pay-api-key')).toBe(specialCharsKey);
   });
+
+  it('disables input field when disabled prop is true', () => {
+    render(<ApiKeyInput disabled={true} />);
+
+    const input = screen.getByLabelText('API Key') as HTMLInputElement;
+    expect(input).toBeDisabled();
+  });
+
+  it('disables show/hide button when disabled prop is true', () => {
+    render(<ApiKeyInput disabled={true} />);
+
+    const toggleButton = screen.getByRole('button', { name: /show api key/i });
+    expect(toggleButton).toBeDisabled();
+  });
+
+  it('disables clear button when disabled prop is true', () => {
+    localStorage.setItem('qr-pay-api-key', 'test-key');
+    render(<ApiKeyInput disabled={true} />);
+
+    const clearButton = screen.getByRole('button', { name: /clear api key/i });
+    expect(clearButton).toBeDisabled();
+  });
+
+  it('allows interaction when disabled prop is false', () => {
+    render(<ApiKeyInput disabled={false} />);
+
+    const input = screen.getByLabelText('API Key') as HTMLInputElement;
+    const toggleButton = screen.getByRole('button', { name: /show api key/i });
+
+    expect(input).not.toBeDisabled();
+    expect(toggleButton).not.toBeDisabled();
+
+    fireEvent.change(input, { target: { value: 'test' } });
+    expect(input.value).toBe('test');
+  });
 });
