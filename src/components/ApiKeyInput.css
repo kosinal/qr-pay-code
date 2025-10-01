@@ -8,7 +8,7 @@
 .api-key-label {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .api-key-input-container {
@@ -21,26 +21,32 @@
 .api-key-input-field {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-family: monospace;
-  background-color: #ffffff;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.api-key-input-field::placeholder {
+  color: var(--text-muted);
 }
 
 .api-key-input-field:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .api-key-toggle-btn,
 .api-key-clear-btn {
   padding: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 0.375rem;
-  background-color: #f9fafb;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-size: 0.875rem;
@@ -52,12 +58,19 @@
 
 .api-key-toggle-btn:hover,
 .api-key-clear-btn:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-primary);
 }
 
 .api-key-toggle-btn:active,
 .api-key-clear-btn:active {
   transform: translateY(1px);
+}
+
+.api-key-toggle-btn:disabled,
+.api-key-clear-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 @media (max-width: 640px) {
@@ -70,46 +83,5 @@
   .api-key-clear-btn {
     align-self: flex-end;
     margin-top: 0.5rem;
-  }
-}
-
-/* Light theme */
-@media (prefers-color-scheme: light) {
-  .api-key-input-field {
-    background-color: #ffffff;
-    color: #111827;
-  }
-}
-
-/* Dark theme */
-@media (prefers-color-scheme: dark) {
-  .api-key-input {
-    --bg-color: #1f2937;
-    --text-color: #f9fafb;
-    --border-color: #4b5563;
-    --button-bg: #374151;
-    --button-hover: #4b5563;
-  }
-
-  .api-key-label {
-    color: #f9fafb;
-  }
-
-  .api-key-input-field {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border-color: var(--border-color);
-  }
-
-  .api-key-toggle-btn,
-  .api-key-clear-btn {
-    background-color: var(--button-bg);
-    border-color: var(--border-color);
-    color: var(--text-color);
-  }
-
-  .api-key-toggle-btn:hover,
-  .api-key-clear-btn:hover {
-    background-color: var(--button-hover);
   }
 }

@@ -9,17 +9,24 @@
 .payment-textarea {
   width: 100%;
   padding: 1rem;
-  border: 2px solid #ddd;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-family: inherit;
   font-size: 1rem;
   resize: vertical;
   min-height: 150px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.payment-textarea::placeholder {
+  color: var(--text-muted);
 }
 
 .payment-textarea:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: var(--success-color);
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
@@ -32,7 +39,7 @@
 
 .clear-button {
   padding: 0.5rem 1rem;
-  background-color: #f44336;
+  background-color: var(--error-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -46,11 +53,12 @@
 }
 
 .clear-button:disabled {
-  background-color: #ccc;
+  background-color: var(--bg-tertiary);
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .text-counter {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary);
 }

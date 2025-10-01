@@ -1,0 +1,215 @@
+/* Bootstrap Dark Theme Overrides */
+/* Import this after bootstrap to override default styles */
+
+/* Card overrides for dark theme */
+.card {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.card-body {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.card-title {
+  color: var(--text-primary) !important;
+}
+
+.card-text {
+  color: var(--text-secondary) !important;
+}
+
+/* Form controls for dark theme */
+.form-control {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.form-control::placeholder {
+  color: var(--text-muted) !important;
+}
+
+.form-control:focus {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--accent-primary) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
+}
+
+.form-control:disabled {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-muted) !important;
+  opacity: 0.6;
+}
+
+.form-label {
+  color: var(--text-primary) !important;
+}
+
+.form-select {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%28255,255,255,0.87%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+
+.form-select:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
+}
+
+.form-select:disabled {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-muted) !important;
+  opacity: 0.6;
+}
+
+/* Button overrides */
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+  color: white !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.5) !important;
+}
+
+.btn-primary:disabled {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+  opacity: 0.5;
+}
+
+.btn-outline-secondary {
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--accent-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.btn-outline-secondary:disabled {
+  color: var(--text-muted) !important;
+  border-color: var(--border-color) !important;
+  opacity: 0.5;
+}
+
+.btn-outline-danger {
+  color: var(--error-color) !important;
+  border-color: var(--error-color) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--error-color) !important;
+  border-color: var(--error-color) !important;
+  color: white !important;
+}
+
+.btn-outline-danger:disabled {
+  color: var(--text-muted) !important;
+  border-color: var(--border-color) !important;
+  opacity: 0.5;
+}
+
+/* Alert overrides */
+.alert {
+  border-color: var(--border-color) !important;
+}
+
+.alert-danger {
+  background-color: rgba(244, 67, 54, 0.15) !important;
+  border-color: var(--error-color) !important;
+  color: #ff6b6b !important;
+}
+
+.alert-danger .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Container and layout */
+.container {
+  color: var(--text-primary);
+}
+
+/* Input group overrides */
+.input-group-text {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Invalid feedback */
+.invalid-feedback {
+  color: var(--error-color) !important;
+  display: block;
+}
+
+.form-control.is-invalid {
+  border-color: var(--error-color) !important;
+}
+
+.form-control.is-invalid:focus {
+  border-color: var(--error-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(244, 67, 54, 0.25) !important;
+}
+
+/* SVG and icon colors */
+svg {
+  color: var(--text-primary);
+}
+
+/* QR Code specific styling */
+.qr-code-display {
+  background-color: white !important;
+  padding: 1rem;
+}
+
+.qr-code-display .card-body {
+  background-color: white !important;
+}
+
+.qr-code-display .card-title {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-secondary);
+  padding: 0.5rem;
+  margin: -1rem -1rem 1rem -1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.qr-code-display .card-text {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-secondary);
+  padding: 0.5rem;
+  margin: 1rem -1rem -1rem -1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.qr-code-container {
+  background-color: white !important;
+  display: inline-block;
+  padding: 20px;
+  border-radius: 8px;
+}

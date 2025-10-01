@@ -24,7 +24,7 @@ describe('SimpleLayout Component', () => {
   it('renders submit button', () => {
     render(<SimpleLayout />);
 
-    expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
   });
 
   it('has proper Bootstrap container structure', () => {
@@ -55,13 +55,13 @@ describe('SimpleLayout Component', () => {
     expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
     expect(screen.getByLabelText('Gemini Model')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
   });
 
   it('shows validation errors when submitting with empty fields', () => {
     render(<SimpleLayout />);
 
-    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
     fireEvent.click(submitButton);
 
     expect(screen.getByText('API Key is required')).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe('SimpleLayout Component', () => {
 
     const apiKeyInput = screen.getByLabelText('API Key');
     const textarea = screen.getByRole('textbox');
-    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
     fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
     fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -111,7 +111,7 @@ describe('SimpleLayout Component', () => {
     const apiKeyInput = screen.getByLabelText('API Key');
     const modelSelect = screen.getByLabelText('Gemini Model');
     const textarea = screen.getByRole('textbox');
-    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
     fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
     fireEvent.change(modelSelect, { target: { value: 'gemini-2.5-flash' } });
@@ -136,7 +136,7 @@ describe('SimpleLayout Component', () => {
 
     const apiKeyInput = screen.getByLabelText('API Key');
     const textarea = screen.getByRole('textbox');
-    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
     fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
     fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -145,7 +145,7 @@ describe('SimpleLayout Component', () => {
     expect(screen.getByRole('button', { name: 'Processing...' })).toBeDisabled();
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Submit' })).not.toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Generate QR Code' })).not.toBeDisabled();
     });
   });
 
@@ -164,7 +164,7 @@ describe('SimpleLayout Component', () => {
 
     const apiKeyInput = screen.getByLabelText('API Key');
     const textarea = screen.getByRole('textbox');
-    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
     fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
     fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -207,7 +207,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key');
       const textarea = screen.getByRole('textbox');
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -242,7 +242,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key');
       const textarea = screen.getByRole('textbox');
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -277,7 +277,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key');
       const textarea = screen.getByRole('textbox');
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -312,7 +312,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key');
       const textarea = screen.getByRole('textbox');
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -341,7 +341,7 @@ describe('SimpleLayout Component', () => {
       const apiKeyInput = screen.getByLabelText('API Key') as HTMLInputElement;
       const modelSelect = screen.getByLabelText('Gemini Model') as HTMLSelectElement;
       const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       // Initially all components should be enabled
       expect(apiKeyInput).not.toBeDisabled();
@@ -363,7 +363,7 @@ describe('SimpleLayout Component', () => {
 
       // After loading completes, components should be enabled again
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
       });
 
       expect(apiKeyInput).not.toBeDisabled();
@@ -384,7 +384,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key') as HTMLInputElement;
       const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -401,7 +401,7 @@ describe('SimpleLayout Component', () => {
       expect(clearButton).toBeDisabled();
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
       });
     });
 
@@ -418,7 +418,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key') as HTMLInputElement;
       const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -435,7 +435,7 @@ describe('SimpleLayout Component', () => {
       expect(clearButton).toBeDisabled();
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
       });
     });
   });
@@ -470,7 +470,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key');
       const textarea = screen.getByRole('textbox');
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
@@ -507,7 +507,7 @@ describe('SimpleLayout Component', () => {
 
       const apiKeyInput = screen.getByLabelText('API Key');
       const textarea = screen.getByRole('textbox');
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
 
       fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });

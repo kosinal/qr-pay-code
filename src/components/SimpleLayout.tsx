@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
+import { Container, Card, Button, Alert } from 'react-bootstrap';
 import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
@@ -7,6 +7,9 @@ import { QRCodeDisplay } from './QRCodeDisplay';
 import { createGeminiService } from '../utils/geminiService';
 import { IBANBuilder, CountryCode } from 'ibankit';
 import { createShortPaymentDescriptor } from '@spayd/core';
+import './SimpleLayout.css';
+import './ApiKeyInput.css';
+import './PaymentTextInput.css';
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
@@ -156,48 +159,44 @@ export const SimpleLayout: React.FC = () => {
 
   return (
     <Container className="simple-layout py-4">
-      <Row className="justify-content-center">
-        <Col md={8} lg={6}>
           {errorMessage && (
             <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
               {errorMessage}
             </Alert>
           )}
-          <QRCodeDisplay spaydString={spaydString} className="mb-3" />
-          <Card>
-            <Card.Body>
-              <ApiKeyInput
-                placeholder="Enter your OpenAI API key"
-                onApiKeyChange={(key) => setApiKey(key)}
-                className="mb-4"
-                isInvalid={showValidation && !apiKey}
-                disabled={isLoading}
-              />
-              <ModelSelect
-                value={selectedModel}
-                onChange={setSelectedModel}
-                className="mb-4"
-                disabled={isLoading}
-              />
-              <PaymentTextInput
-                value={paymentText}
-                onChange={setPaymentText}
-                isInvalid={showValidation && !paymentText}
-                disabled={isLoading}
-              />
-              <div className="d-flex justify-content-end mt-3">
-                <Button
-                  variant="primary"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Processing...' : 'Submit'}
-                </Button>
-              </div>
-            </Card.Body>
+          <Card className="mb-3">
+              <Card.Body>
+                  <QRCodeDisplay spaydString={spaydString}/>
+                  <PaymentTextInput
+                      value={paymentText}
+                      onChange={setPaymentText}
+                      isInvalid={showValidation && !paymentText}
+                      disabled={isLoading}
+                  />
+                  <ApiKeyInput
+                      placeholder="Enter your Gemini API key"
+                      onApiKeyChange={(key) => setApiKey(key)}
+                      className="mb-4"
+                      isInvalid={showValidation && !apiKey}
+                      disabled={isLoading}
+                  />
+                  <ModelSelect
+                      value={selectedModel}
+                      onChange={setSelectedModel}
+                      className="mb-4"
+                      disabled={isLoading}
+                  />
+                  <div className="d-flex justify-content-end mt-3">
+                      <Button
+                          variant="primary"
+                          onClick={handleSubmit}
+                          disabled={isLoading}
+                      >
+                          {isLoading ? 'Processing...' : 'Generate QR Code'}
+                      </Button>
+                  </div>
+              </Card.Body>
           </Card>
-        </Col>
-      </Row>
     </Container>
   );
 };
