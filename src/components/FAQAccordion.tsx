@@ -1,11 +1,33 @@
 import React from 'react';
-import { Accordion, Card } from 'react-bootstrap';
+import { Accordion } from 'react-bootstrap';
 import './FAQAccordion.css';
 
 interface FAQItem {
   question: string;
   answer: string;
 }
+
+const renderAnswerWithLinks = (text: string): React.ReactNode => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return parts.map((part, index) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="faq-link"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
 
 const faqData: FAQItem[] = [
   {
@@ -22,7 +44,11 @@ const faqData: FAQItem[] = [
   },
   {
     question: "Where can I get Gemini API?",
-    answer: "You can create new API key at https://aistudio.google.com/api-keys."
+    answer: "You can create new API key at https://aistudio.google.com/api-keys ."
+  },
+  {
+    question: "How much does it cost?",
+    answer: "It mostly depends on your usage. For vast majority of users, Free limit of Gemini is more than enough. For more details, visit https://ai.google.dev/gemini-api/docs/pricing ."
   },
   {
     question: "Is my payment information secure?",
@@ -49,7 +75,7 @@ export const FAQAccordion: React.FC = () => {
               <span className="faq-question">{faq.question}</span>
             </Accordion.Header>
             <Accordion.Body>
-              <p className="faq-answer">{faq.answer}</p>
+              <p className="faq-answer">{renderAnswerWithLinks(faq.answer)}</p>
             </Accordion.Body>
           </Accordion.Item>
         ))}

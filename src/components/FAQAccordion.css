@@ -79,6 +79,18 @@
   font-size: 1rem;
 }
 
+.faq-link {
+  color: #6ea8fe;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  word-break: break-all;
+}
+
+.faq-link:hover {
+  color: #9ec5fe;
+  text-decoration: underline;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .faq-section h2 {
