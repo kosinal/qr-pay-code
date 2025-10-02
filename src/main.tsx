@@ -8,7 +8,7 @@ import './theme.css';
 const PaymentApp: React.FC = () => {
 
   return (
-    <div className="container d-flex justify-content-center align-items-center min-vh-100">
+    <div className="container d-flex justify-content-center align-items-center min-vh-100 py-4">
       <div className="w-100" style={{ maxWidth: '800px' }}>
         <SimpleLayout />
       </div>

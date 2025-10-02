@@ -10,6 +10,7 @@ import { createShortPaymentDescriptor } from '@spayd/core';
 import './SimpleLayout.css';
 import './ApiKeyInput.css';
 import './PaymentTextInput.css';
+import {FAQAccordion} from "./FAQAccordion.tsx";
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
@@ -198,6 +199,7 @@ export const SimpleLayout: React.FC = () => {
             </Button>
           </div>
         </Card.Body>
+        <FAQAccordion />
       </Card>
     </>
   );
