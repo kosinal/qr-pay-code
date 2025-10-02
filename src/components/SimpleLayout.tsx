@@ -160,13 +160,13 @@ export const SimpleLayout: React.FC = () => {
 
   return (
     <>
-      {errorMessage && (
-        <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
-          {errorMessage}
-        </Alert>
-      )}
       <Card className="shadow-lg" style={{ backgroundColor: 'rgba(45, 45, 45, 0.85)' }}>
         <Card.Body className="p-4">
+          {errorMessage && (
+            <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
+                {errorMessage}
+            </Alert>
+          )}
           <h1 className="text-center mb-3">QR Code Payment Generator</h1>
           <QRCodeDisplay spaydString={spaydString} className="mb-4"/>
           <PaymentTextInput
