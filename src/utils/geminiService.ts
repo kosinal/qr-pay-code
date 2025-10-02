@@ -66,10 +66,36 @@ export class GeminiService {
     this.genai = new GoogleGenAI({ apiKey });
   }
 
+  /**
+   * Sanitizes user input to prevent XML tag injection attacks
+   * Escapes all XML/HTML special characters and removes any attempts to inject tags
+   */
+  private sanitizeUserInput(input: string): string {
+    // First pass: escape all XML/HTML special characters
+    let sanitized = input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+
+    // Second pass: detect and neutralize any remaining tag-like patterns
+    // This catches attempts like &lt;user_input&gt; or encoded variations
+    sanitized = sanitized.replace(/(&lt;|&#60;|&#x3C;)\s*(\/?\s*user_input|\/?\s*input|\/?\s*system|\/?\s*prompt)\s*(&gt;|&#62;|&#x3E;)/gi, '[BLOCKED_TAG]');
+
+    // Third pass: remove null bytes and control characters that could be used for injection
+    sanitized = sanitized.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
+
+    return sanitized;
+  }
+
   async generateContent(userInput: string, model: string = 'gemini-2.5-flash'): Promise<GeminiResponse> {
     try {
-      // Replace {user_input} placeholder with actual user input
-      const finalPrompt = PROMPT_TEMPLATE.replace('{user_input}', userInput);
+      // Sanitize user input to prevent XML tag injection
+      const sanitizedInput = this.sanitizeUserInput(userInput);
+
+      // Replace {user_input} placeholder with sanitized user input
+      const finalPrompt = PROMPT_TEMPLATE.replace('{user_input}', sanitizedInput);
 
       const result = await this.genai.models.generateContent({
         model,
