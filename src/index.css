@@ -8,13 +8,13 @@
 
   /* Dark theme colors */
   --bg-primary: #1a1a1a;
-  --bg-secondary: #2d2d2d;
+  --bg-secondary: rgba(45, 45, 45, 0.6);
   --bg-tertiary: #3a3a3a;
   --text-primary: rgba(255, 255, 255, 0.87);
   --text-secondary: rgba(255, 255, 255, 0.6);
   --text-muted: rgba(255, 255, 255, 0.4);
   --border-color: rgba(255, 255, 255, 0.1);
-  --accent-primary: #646cff;
+  --accent-primary: rgb(20, 20, 20);
   --accent-hover: #535bf2;
   --success-color: #4caf50;
   --error-color: #f44336;
@@ -44,6 +44,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: url('/back.jpg') no-repeat center fixed;
+  background-size: cover;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
