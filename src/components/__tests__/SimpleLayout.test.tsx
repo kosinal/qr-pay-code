@@ -27,11 +27,11 @@ describe('SimpleLayout Component', () => {
     expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
   });
 
-  it('has proper Bootstrap container structure', () => {
+  it('has proper Bootstrap card structure', () => {
     const { container } = render(<SimpleLayout />);
 
-    const containerDiv = container.querySelector('.simple-layout.container');
-    expect(containerDiv).toBeInTheDocument();
+    const card = container.querySelector('.card.shadow-lg');
+    expect(card).toBeInTheDocument();
   });
 
   it('has Bootstrap card structure', () => {
