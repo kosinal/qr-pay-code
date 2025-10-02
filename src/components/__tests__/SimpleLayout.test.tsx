@@ -8,6 +8,19 @@ vi.mock('../../utils/geminiService', () => ({
 }));
 
 describe('SimpleLayout Component', () => {
+  const createMockGeminiService = (generateContentResponse: any) => {
+    const mockGenerateContent = vi.fn().mockResolvedValue(generateContentResponse);
+    const mockValidateResponse = vi.fn().mockResolvedValue({
+      status: true,
+      message: 'Validation successful'
+    });
+
+    return {
+      generateContent: mockGenerateContent,
+      validateResponse: mockValidateResponse
+    };
+  };
+
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
@@ -69,14 +82,12 @@ describe('SimpleLayout Component', () => {
   });
 
   it('calls Gemini API with default model when submitting with valid data', async () => {
-    const mockGenerateContent = vi.fn().mockResolvedValue({
+    const mockService = createMockGeminiService({
       text: 'Gemini API response',
       error: undefined
     });
 
-    vi.mocked(geminiService.createGeminiService).mockReturnValue({
-      generateContent: mockGenerateContent
-    } as any);
+    vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
     render(<SimpleLayout />);
 
@@ -89,7 +100,7 @@ describe('SimpleLayout Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockGenerateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-pro');
+      expect(mockService.generateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-pro');
     });
 
     expect(screen.queryByText('API Key is required')).not.toBeInTheDocument();
@@ -97,14 +108,12 @@ describe('SimpleLayout Component', () => {
   });
 
   it('calls Gemini API with selected model when model is changed', async () => {
-    const mockGenerateContent = vi.fn().mockResolvedValue({
+    const mockService = createMockGeminiService({
       text: 'Gemini API response',
       error: undefined
     });
 
-    vi.mocked(geminiService.createGeminiService).mockReturnValue({
-      generateContent: mockGenerateContent
-    } as any);
+    vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
     render(<SimpleLayout />);
 
@@ -119,7 +128,7 @@ describe('SimpleLayout Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockGenerateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-flash');
+      expect(mockService.generateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-flash');
     });
   });
 
@@ -127,9 +136,14 @@ describe('SimpleLayout Component', () => {
     const mockGenerateContent = vi.fn().mockImplementation(() =>
       new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
     );
+    const mockValidateResponse = vi.fn().mockResolvedValue({
+      status: true,
+      message: 'Validation successful'
+    });
 
     vi.mocked(geminiService.createGeminiService).mockReturnValue({
-      generateContent: mockGenerateContent
+      generateContent: mockGenerateContent,
+      validateResponse: mockValidateResponse
     } as any);
 
     render(<SimpleLayout />);
@@ -150,14 +164,12 @@ describe('SimpleLayout Component', () => {
   });
 
   it('logs error when Gemini API returns error', async () => {
-    const mockGenerateContent = vi.fn().mockResolvedValue({
+    const mockService = createMockGeminiService({
       text: '',
       error: 'API Error'
     });
 
-    vi.mocked(geminiService.createGeminiService).mockReturnValue({
-      generateContent: mockGenerateContent
-    } as any);
+    vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
     const consoleErrorSpy = vi.spyOn(console, 'error');
     render(<SimpleLayout />);
@@ -186,7 +198,7 @@ describe('SimpleLayout Component', () => {
 
   describe('IBAN Generation with Branch Code', () => {
     it('generates correct IBAN for account with branch code', async () => {
-      const mockGenerateContent = vi.fn().mockResolvedValue({
+      const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
           account_number: '123456-7890',
@@ -199,9 +211,7 @@ describe('SimpleLayout Component', () => {
         }
       });
 
-      vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
-      } as any);
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
       render(<SimpleLayout />);
 
@@ -214,14 +224,14 @@ describe('SimpleLayout Component', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockGenerateContent).toHaveBeenCalled();
+        expect(mockService.generateContent).toHaveBeenCalled();
         const qrCode = screen.queryByTestId('qr-code');
         expect(qrCode).toBeInTheDocument();
       });
     });
 
     it('generates correct IBAN for account without branch code', async () => {
-      const mockGenerateContent = vi.fn().mockResolvedValue({
+      const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
           account_number: '1234567890',
@@ -234,9 +244,7 @@ describe('SimpleLayout Component', () => {
         }
       });
 
-      vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
-      } as any);
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
       render(<SimpleLayout />);
 
@@ -249,14 +257,14 @@ describe('SimpleLayout Component', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockGenerateContent).toHaveBeenCalled();
+        expect(mockService.generateContent).toHaveBeenCalled();
         const qrCode = screen.queryByTestId('qr-code');
         expect(qrCode).toBeInTheDocument();
       });
     });
 
     it('generates correct IBAN for short account with branch code', async () => {
-      const mockGenerateContent = vi.fn().mockResolvedValue({
+      const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
           account_number: '123-45',
@@ -269,9 +277,7 @@ describe('SimpleLayout Component', () => {
         }
       });
 
-      vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
-      } as any);
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
       render(<SimpleLayout />);
 
@@ -284,14 +290,14 @@ describe('SimpleLayout Component', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockGenerateContent).toHaveBeenCalled();
+        expect(mockService.generateContent).toHaveBeenCalled();
         const qrCode = screen.queryByTestId('qr-code');
         expect(qrCode).toBeInTheDocument();
       });
     });
 
     it('handles minimal branch code correctly', async () => {
-      const mockGenerateContent = vi.fn().mockResolvedValue({
+      const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
           account_number: '1-999',
@@ -304,9 +310,7 @@ describe('SimpleLayout Component', () => {
         }
       });
 
-      vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
-      } as any);
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
       render(<SimpleLayout />);
 
@@ -319,7 +323,7 @@ describe('SimpleLayout Component', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockGenerateContent).toHaveBeenCalled();
+        expect(mockService.generateContent).toHaveBeenCalled();
         const qrCode = screen.queryByTestId('qr-code');
         expect(qrCode).toBeInTheDocument();
       });
@@ -331,9 +335,14 @@ describe('SimpleLayout Component', () => {
       const mockGenerateContent = vi.fn().mockImplementation(() =>
         new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
       );
+      const mockValidateResponse = vi.fn().mockResolvedValue({
+        status: true,
+        message: 'Validation successful'
+      });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
+        generateContent: mockGenerateContent,
+        validateResponse: mockValidateResponse
       } as any);
 
       render(<SimpleLayout />);
@@ -375,9 +384,14 @@ describe('SimpleLayout Component', () => {
       const mockGenerateContent = vi.fn().mockImplementation(() =>
         new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
       );
+      const mockValidateResponse = vi.fn().mockResolvedValue({
+        status: true,
+        message: 'Validation successful'
+      });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
+        generateContent: mockGenerateContent,
+        validateResponse: mockValidateResponse
       } as any);
 
       render(<SimpleLayout />);
@@ -409,9 +423,14 @@ describe('SimpleLayout Component', () => {
       const mockGenerateContent = vi.fn().mockImplementation(() =>
         new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
       );
+      const mockValidateResponse = vi.fn().mockResolvedValue({
+        status: true,
+        message: 'Validation successful'
+      });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
+        generateContent: mockGenerateContent,
+        validateResponse: mockValidateResponse
       } as any);
 
       render(<SimpleLayout />);
@@ -448,7 +467,7 @@ describe('SimpleLayout Component', () => {
     });
 
     it('displays QR code after successful SPAYD generation', async () => {
-      const mockGenerateContent = vi.fn().mockResolvedValue({
+      const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
           account_number: '1234567890',
@@ -461,9 +480,7 @@ describe('SimpleLayout Component', () => {
         }
       });
 
-      vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
-      } as any);
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
       render(<SimpleLayout />);
 
@@ -485,7 +502,7 @@ describe('SimpleLayout Component', () => {
     });
 
     it('QR code component is rendered in layout', async () => {
-      const mockGenerateContent = vi.fn().mockResolvedValue({
+      const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
           account_number: '1234567890',
@@ -498,9 +515,7 @@ describe('SimpleLayout Component', () => {
         }
       });
 
-      vi.mocked(geminiService.createGeminiService).mockReturnValue({
-        generateContent: mockGenerateContent
-      } as any);
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
       const { container } = render(<SimpleLayout />);
 

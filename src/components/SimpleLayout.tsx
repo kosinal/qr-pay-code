@@ -19,6 +19,7 @@ export const SimpleLayout: React.FC = () => {
   const [showValidation, setShowValidation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [validationWarning, setValidationWarning] = useState<string | null>(null);
   const [spaydString, setSpaydString] = useState<string | null>(null);
 
   const parseApiError = (error: string): string => {
@@ -122,7 +123,7 @@ export const SimpleLayout: React.FC = () => {
     }
   };
 
-  const handleApiResponse = (response: any): void => {
+  const handleApiResponse = async (response: any, geminiService: any): Promise<void> => {
     if (response.error) {
       console.error('Gemini API Error:', response.error);
       const errorMsg = parseApiError(response.error);
@@ -131,6 +132,16 @@ export const SimpleLayout: React.FC = () => {
     }
 
     if (response.paymentData) {
+      // Validate response for hallucinations
+      const validation = await geminiService.validateResponse(paymentText, response, selectedModel);
+
+      if (!validation.status) {
+        setValidationWarning(validation.message);
+      } else {
+        setValidationWarning(null);
+      }
+
+      // Process payment data regardless of validation result
       processPaymentData(response.paymentData);
     }
   };
@@ -143,12 +154,13 @@ export const SimpleLayout: React.FC = () => {
 
     setShowValidation(false);
     setErrorMessage(null);
+    setValidationWarning(null);
     setIsLoading(true);
 
     try {
       const geminiService = createGeminiService(apiKey);
       const response = await geminiService.generateContent(paymentText, selectedModel);
-      handleApiResponse(response);
+      await handleApiResponse(response, geminiService);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
       const errorMsg = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -165,6 +177,11 @@ export const SimpleLayout: React.FC = () => {
           {errorMessage && (
             <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
                 {errorMessage}
+            </Alert>
+          )}
+          {validationWarning && (
+            <Alert variant="warning" dismissible onClose={() => setValidationWarning(null)} className="mb-3">
+                <strong>Validation Warning:</strong> {validationWarning}
             </Alert>
           )}
           <h1 className="text-center mb-3">QR Code Payment Generator</h1>

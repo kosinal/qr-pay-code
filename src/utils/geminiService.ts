@@ -7,6 +7,11 @@ export interface GeminiResponse {
   error?: string;
 }
 
+export interface ValidationResponse {
+  status: boolean;
+  message: string;
+}
+
 // ============================================================================
 // PROMPT TEMPLATE - Edit this to customize the prompt sent to Gemini
 // ============================================================================
@@ -57,6 +62,37 @@ variable_symbol: 6962100430
 <user_input>
 {user_input}
 </user_input>`;
+// ============================================================================
+
+// ============================================================================
+// VALIDATION PROMPT TEMPLATE - Used for hallucination detection
+// ============================================================================
+const VALIDATION_PROMPT_TEMPLATE = `You are a validation expert. Your task is to verify if the extracted payment data accurately represents the information in the original user input.
+
+Compare the original input with the extracted data and check for:
+1. Invented or hallucinated information not present in the original input
+2. Misinterpreted or incorrect values
+3. Missing critical information that was present in the original
+
+Original user input:
+<original_input>
+{original_input}
+</original_input>
+
+Extracted payment data:
+<extracted_data>
+{extracted_data}
+</extracted_data>
+
+Respond with a JSON object in this exact format:
+{
+  "status": true/false,
+  "message": "explanation of validation result"
+}
+
+Set status to true if the extracted data accurately represents the original input.
+Set status to false if there are hallucinations, significant errors, or critical missing information.
+Provide a clear message explaining your assessment.`;
 // ============================================================================
 
 export class GeminiService {
@@ -124,6 +160,53 @@ export class GeminiService {
       return {
         text: '',
         error: errorMessage
+      };
+    }
+  }
+
+  async validateResponse(userPrompt: string, parsedResponse: GeminiResponse, model: string = 'gemini-2.5-flash'): Promise<ValidationResponse> {
+    try {
+      // If there's no payment data to validate, return success
+      if (!parsedResponse.paymentData) {
+        return {
+          status: true,
+          message: 'No payment data to validate'
+        };
+      }
+
+      // Sanitize user input to prevent injection
+      const sanitizedInput = this.sanitizeUserInput(userPrompt);
+
+      // Create validation prompt with original input and extracted data
+      const extractedDataJson = JSON.stringify(parsedResponse.paymentData, null, 2);
+      const validationPrompt = VALIDATION_PROMPT_TEMPLATE
+        .replace('{original_input}', sanitizedInput)
+        .replace('{extracted_data}', extractedDataJson);
+
+      const result = await this.genai.models.generateContent({
+        model,
+        contents: validationPrompt
+      });
+
+      const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+      // Parse validation response
+      try {
+        const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
+        const jsonString = jsonMatch ? jsonMatch[1] : text;
+        return JSON.parse(jsonString.trim()) as ValidationResponse;
+      } catch (parseError) {
+        console.warn('Failed to parse validation response:', parseError);
+        return {
+          status: false,
+          message: 'Unable to validate response format'
+        };
+      }
+    } catch (error) {
+      console.error('Validation error:', error);
+      return {
+        status: false,
+        message: error instanceof Error ? error.message : 'Validation failed'
       };
     }
   }
