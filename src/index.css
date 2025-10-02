@@ -44,6 +44,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  /*noinspection CssUnknownTarget*/
   background: url('/back.jpg') no-repeat center fixed;
   background-size: cover;
   background-color: var(--bg-primary);
