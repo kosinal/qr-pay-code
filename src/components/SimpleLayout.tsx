@@ -158,45 +158,46 @@ export const SimpleLayout: React.FC = () => {
   };
 
   return (
-    <Container className="simple-layout py-4">
-          {errorMessage && (
-            <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
-              {errorMessage}
-            </Alert>
-          )}
-          <Card className="mb-3" style={{ backgroundColor: 'rgba(45, 45, 45, 0.85)' }}>
-              <Card.Body>
-                  <QRCodeDisplay spaydString={spaydString} className="mb-4"/>
-                  <PaymentTextInput
-                      value={paymentText}
-                      onChange={setPaymentText}
-                      isInvalid={showValidation && !paymentText}
-                      disabled={isLoading}
-                  />
-                  <ApiKeyInput
-                      placeholder="Enter your Gemini API key"
-                      onApiKeyChange={(key) => setApiKey(key)}
-                      className="mb-4"
-                      isInvalid={showValidation && !apiKey}
-                      disabled={isLoading}
-                  />
-                  <ModelSelect
-                      value={selectedModel}
-                      onChange={setSelectedModel}
-                      className="mb-4"
-                      disabled={isLoading}
-                  />
-                  <div className="d-flex justify-content-end mt-3">
-                      <Button
-                          variant="primary"
-                          onClick={handleSubmit}
-                          disabled={isLoading}
-                      >
-                          {isLoading ? 'Processing...' : 'Generate QR Code'}
-                      </Button>
-                  </div>
-              </Card.Body>
-          </Card>
-    </Container>
+    <>
+      {errorMessage && (
+        <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
+          {errorMessage}
+        </Alert>
+      )}
+      <Card className="shadow-lg" style={{ backgroundColor: 'rgba(45, 45, 45, 0.85)' }}>
+        <Card.Body className="p-4">
+          <QRCodeDisplay spaydString={spaydString} className="mb-4"/>
+          <PaymentTextInput
+            value={paymentText}
+            onChange={setPaymentText}
+            isInvalid={showValidation && !paymentText}
+            disabled={isLoading}
+          />
+          <ApiKeyInput
+            placeholder="Enter your Gemini API key"
+            onApiKeyChange={(key) => setApiKey(key)}
+            className="mb-4"
+            isInvalid={showValidation && !apiKey}
+            disabled={isLoading}
+          />
+          <ModelSelect
+            value={selectedModel}
+            onChange={setSelectedModel}
+            className="mb-4"
+            disabled={isLoading}
+          />
+          <div className="d-flex justify-content-end mt-3">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Processing...' : 'Generate QR Code'}
+            </Button>
+          </div>
+        </Card.Body>
+      </Card>
+    </>
   );
 };

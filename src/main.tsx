@@ -8,10 +8,12 @@ import './theme.css';
 const PaymentApp: React.FC = () => {
 
   return (
-    <div className="payment-app">
-      <h1>QR Code Payment Generator</h1>
-      <span style={{ marginBottom: '0.5rem', display: 'block' }}>Enter payment information in the text area below:</span>
-      <SimpleLayout />
+    <div className="container d-flex justify-content-center align-items-center min-vh-100">
+      <div className="w-100" style={{ maxWidth: '800px' }}>
+        <h1 className="text-center mb-3">QR Code Payment Generator</h1>
+        <p className="text-center text-muted mb-4">Enter payment information in the text area below:</p>
+        <SimpleLayout />
+      </div>
     </div>
   );
 };

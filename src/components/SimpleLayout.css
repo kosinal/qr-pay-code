@@ -1,31 +1,25 @@
-.simple-layout {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 2rem;
-  background-color: var(--bg-primary);
+/* Card styling overrides for better dark theme appearance */
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.main-content {
-  background: var(--bg-secondary);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  max-width: 600px;
-  width: 100%;
-}
-
-.input-container h1 {
-  margin: 0 0 1rem 0;
+.card-body {
   color: var(--text-primary);
-  font-size: 2rem;
 }
 
-.description {
-  color: var(--text-secondary);
-  margin: 0 0 2rem 0;
-  font-size: 1rem;
-  line-height: 1.5;
+/* Responsive spacing adjustments */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1rem !important;
+  }
+
+  h1 {
+    font-size: 2rem !important;
+  }
 }
