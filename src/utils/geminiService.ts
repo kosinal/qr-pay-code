@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import type {PaymentData} from '../types/paymentData';
+import type { PaymentData } from '../types/paymentData';
 
 export interface GeminiResponse {
   text: string;
@@ -117,7 +117,10 @@ export class GeminiService {
 
     // Second pass: detect and neutralize any remaining tag-like patterns
     // This catches attempts like &lt;user_input&gt; or encoded variations
-    sanitized = sanitized.replace(/(&lt;|&#60;|&#x3C;)\s*(\/?\s*user_input|\/?\s*input|\/?\s*system|\/?\s*prompt)\s*(&gt;|&#62;|&#x3E;)/gi, '[BLOCKED_TAG]');
+    sanitized = sanitized.replace(
+      /(&lt;|&#60;|&#x3C;)\s*(\/?\s*user_input|\/?\s*input|\/?\s*system|\/?\s*prompt)\s*(&gt;|&#62;|&#x3E;)/gi,
+      '[BLOCKED_TAG]'
+    );
 
     // Third pass: remove null bytes and control characters that could be used for injection
     sanitized = sanitized.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
@@ -125,7 +128,10 @@ export class GeminiService {
     return sanitized;
   }
 
-  async generateContent(userInput: string, model: string = 'gemini-2.5-flash'): Promise<GeminiResponse> {
+  async generateContent(
+    userInput: string,
+    model: string = 'gemini-2.5-flash'
+  ): Promise<GeminiResponse> {
     try {
       // Sanitize user input to prevent XML tag injection
       const sanitizedInput = this.sanitizeUserInput(userInput);
@@ -135,7 +141,7 @@ export class GeminiService {
 
       const result = await this.genai.models.generateContent({
         model,
-        contents: finalPrompt
+        contents: finalPrompt,
       });
 
       const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
@@ -145,7 +151,8 @@ export class GeminiService {
       if (text) {
         try {
           // Extract JSON from markdown code blocks if present
-          const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
+          const jsonMatch =
+            text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
           const jsonString = jsonMatch ? jsonMatch[1] : text;
 
           paymentData = JSON.parse(jsonString.trim()) as PaymentData;
@@ -159,18 +166,22 @@ export class GeminiService {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       return {
         text: '',
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
 
-  async validateResponse(userPrompt: string, parsedResponse: GeminiResponse, model: string = 'gemini-2.5-flash'): Promise<ValidationResponse> {
+  async validateResponse(
+    userPrompt: string,
+    parsedResponse: GeminiResponse,
+    model: string = 'gemini-2.5-flash'
+  ): Promise<ValidationResponse> {
     try {
       // If there's no payment data to validate, return success
       if (!parsedResponse.paymentData) {
         return {
           status: true,
-          message: 'No payment data to validate'
+          message: 'No payment data to validate',
         };
       }
 
@@ -179,34 +190,36 @@ export class GeminiService {
 
       // Create validation prompt with original input and extracted data
       const extractedDataJson = JSON.stringify(parsedResponse.paymentData, null, 2);
-      const validationPrompt = VALIDATION_PROMPT_TEMPLATE
-        .replace('{original_input}', sanitizedInput)
-        .replace('{extracted_data}', extractedDataJson);
+      const validationPrompt = VALIDATION_PROMPT_TEMPLATE.replace(
+        '{original_input}',
+        sanitizedInput
+      ).replace('{extracted_data}', extractedDataJson);
 
       const result = await this.genai.models.generateContent({
         model,
-        contents: validationPrompt
+        contents: validationPrompt,
       });
 
       const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
       // Parse validation response
       try {
-        const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
+        const jsonMatch =
+          text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
         const jsonString = jsonMatch ? jsonMatch[1] : text;
         return JSON.parse(jsonString.trim()) as ValidationResponse;
       } catch (parseError) {
         console.warn('Failed to parse validation response:', parseError);
         return {
           status: false,
-          message: 'Unable to validate response format'
+          message: 'Unable to validate response format',
         };
       }
     } catch (error) {
       console.error('Validation error:', error);
       return {
         status: false,
-        message: error instanceof Error ? error.message : 'Validation failed'
+        message: error instanceof Error ? error.message : 'Validation failed',
       };
     }
   }

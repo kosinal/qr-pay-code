@@ -55,7 +55,7 @@ describe('FAQAccordion Component', () => {
     const links = screen.getAllByRole('link');
     expect(links.length).toBeGreaterThan(0);
 
-    const apiLink = links.find(link =>
+    const apiLink = links.find((link) =>
       link.getAttribute('href')?.includes('aistudio.google.com')
     );
     expect(apiLink).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('FAQAccordion Component', () => {
     render(<FAQAccordion />);
 
     const pricingLink = screen.getByRole('link', {
-      name: /ai\.google\.dev\/gemini-api\/docs\/pricing/
+      name: /ai\.google\.dev\/gemini-api\/docs\/pricing/,
     });
     expect(pricingLink).toBeInTheDocument();
     expect(pricingLink).toHaveAttribute('href', 'https://ai.google.dev/gemini-api/docs/pricing');
@@ -83,7 +83,9 @@ describe('FAQAccordion Component', () => {
   it('renders answers with proper text content', () => {
     render(<FAQAccordion />);
 
-    expect(screen.getByText(/scannable QR codes containing payment information/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/scannable QR codes containing payment information/)
+    ).toBeInTheDocument();
     expect(screen.getByText(/processed locally in your browser/)).toBeInTheDocument();
   });
 
@@ -104,7 +106,9 @@ describe('FAQAccordion Component', () => {
   it('renders security-related FAQ correctly', () => {
     render(<FAQAccordion />);
 
-    expect(screen.getByText(/Your API key and payment information are processed locally/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Your API key and payment information are processed locally/)
+    ).toBeInTheDocument();
     expect(screen.getByText(/No payment data is stored on our servers/)).toBeInTheDocument();
   });
 

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import type { ChangeEvent } from 'react';
+import React, { useState, type ChangeEvent } from 'react';
 import { Form } from 'react-bootstrap';
 
 interface PaymentTextInputProps {
@@ -13,7 +12,7 @@ export const PaymentTextInput: React.FC<PaymentTextInputProps> = ({
   value: externalValue,
   onChange,
   isInvalid = false,
-  disabled = false
+  disabled = false,
 }) => {
   const [paymentText, setPaymentText] = useState('');
   const value = externalValue !== undefined ? externalValue : paymentText;

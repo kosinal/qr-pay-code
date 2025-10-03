@@ -4,7 +4,7 @@ import {
   setLocalStorageItem,
   removeLocalStorageItem,
   isLocalStorageAvailable,
-  _setLocalStorage
+  _setLocalStorage,
 } from '../localStorage';
 
 const TEST_KEY = 'test-storage-key';
@@ -121,7 +121,7 @@ describe('LocalStorage Utilities', () => {
         }),
         clear: vi.fn(),
         key: vi.fn(),
-        length: 0
+        length: 0,
       } as unknown as Storage;
 
       // Use our test helper to set the mock
@@ -158,7 +158,7 @@ describe('LocalStorage Utilities', () => {
         removeItem: vi.fn(),
         clear: vi.fn(),
         key: vi.fn(),
-        length: 0
+        length: 0,
       } as unknown as Storage;
 
       // Use our test helper to set the mock

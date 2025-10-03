@@ -27,7 +27,9 @@
   font-family: monospace;
   background-color: var(--bg-secondary);
   color: var(--text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .api-key-input-field::placeholder {

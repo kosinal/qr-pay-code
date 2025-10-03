@@ -10,7 +10,7 @@ import { createShortPaymentDescriptor } from '@spayd/core';
 import './SimpleLayout.css';
 import './ApiKeyInput.css';
 import './PaymentTextInput.css';
-import {FAQAccordion} from "./FAQAccordion.tsx";
+import { FAQAccordion } from './FAQAccordion.tsx';
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
@@ -33,7 +33,9 @@ export const SimpleLayout: React.FC = () => {
 
   const validateBankInformation = (paymentData: any): boolean => {
     if (!paymentData.account_number || !paymentData.bank_code) {
-      setErrorMessage('Unable to find bank information (account number or bank code) in the payment data.');
+      setErrorMessage(
+        'Unable to find bank information (account number or bank code) in the payment data.'
+      );
       return false;
     }
     return true;
@@ -175,43 +177,48 @@ export const SimpleLayout: React.FC = () => {
       <Card className="shadow-lg" style={{ backgroundColor: 'rgba(45, 45, 45, 0.85)' }}>
         <Card.Body className="p-4">
           {errorMessage && (
-            <Alert variant="danger" dismissible onClose={() => setErrorMessage(null)} className="mb-3">
-                {errorMessage}
+            <Alert
+              variant="danger"
+              dismissible
+              onClose={() => setErrorMessage(null)}
+              className="mb-3"
+            >
+              {errorMessage}
             </Alert>
           )}
           {validationWarning && (
-            <Alert variant="warning" dismissible onClose={() => setValidationWarning(null)} className="mb-3">
-                <strong>Validation Warning:</strong> {validationWarning}
+            <Alert
+              variant="warning"
+              dismissible
+              onClose={() => setValidationWarning(null)}
+              className="mb-3"
+            >
+              <strong>Validation Warning:</strong> {validationWarning}
             </Alert>
           )}
           <h1 className="text-center mb-3">QR Code Payment Generator</h1>
-          <QRCodeDisplay spaydString={spaydString} className="mb-4"/>
+          <QRCodeDisplay spaydString={spaydString} className="mb-4" />
           <PaymentTextInput
-              value={paymentText}
-              onChange={setPaymentText}
-              isInvalid={showValidation && !paymentText}
-              disabled={isLoading}
+            value={paymentText}
+            onChange={setPaymentText}
+            isInvalid={showValidation && !paymentText}
+            disabled={isLoading}
           />
           <ApiKeyInput
-              placeholder="Enter your Gemini API key"
-              onApiKeyChange={(key) => setApiKey(key)}
-              className="mb-4"
-              isInvalid={showValidation && !apiKey}
-              disabled={isLoading}
+            placeholder="Enter your Gemini API key"
+            onApiKeyChange={(key) => setApiKey(key)}
+            className="mb-4"
+            isInvalid={showValidation && !apiKey}
+            disabled={isLoading}
           />
           <ModelSelect
-              value={selectedModel}
-              onChange={setSelectedModel}
-              className="mb-4"
-              disabled={isLoading}
+            value={selectedModel}
+            onChange={setSelectedModel}
+            className="mb-4"
+            disabled={isLoading}
           />
           <div className="d-flex justify-content-end mt-3">
-            <Button
-                variant="primary"
-                size="lg"
-                onClick={handleSubmit}
-                disabled={isLoading}
-            >
+            <Button variant="primary" size="lg" onClick={handleSubmit} disabled={isLoading}>
               {isLoading ? 'Processing...' : 'Generate QR Code'}
             </Button>
           </div>

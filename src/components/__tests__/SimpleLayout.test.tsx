@@ -4,7 +4,7 @@ import { SimpleLayout } from '../SimpleLayout';
 import * as geminiService from '../../utils/geminiService';
 
 vi.mock('../../utils/geminiService', () => ({
-  createGeminiService: vi.fn()
+  createGeminiService: vi.fn(),
 }));
 
 describe('SimpleLayout Component', () => {
@@ -12,12 +12,12 @@ describe('SimpleLayout Component', () => {
     const mockGenerateContent = vi.fn().mockResolvedValue(generateContentResponse);
     const mockValidateResponse = vi.fn().mockResolvedValue({
       status: true,
-      message: 'Validation successful'
+      message: 'Validation successful',
     });
 
     return {
       generateContent: mockGenerateContent,
-      validateResponse: mockValidateResponse
+      validateResponse: mockValidateResponse,
     };
   };
 
@@ -84,7 +84,7 @@ describe('SimpleLayout Component', () => {
   it('calls Gemini API with default model when submitting with valid data', async () => {
     const mockService = createMockGeminiService({
       text: 'Gemini API response',
-      error: undefined
+      error: undefined,
     });
 
     vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -100,7 +100,10 @@ describe('SimpleLayout Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockService.generateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-pro');
+      expect(mockService.generateContent).toHaveBeenCalledWith(
+        'Test payment text',
+        'gemini-2.5-pro'
+      );
     });
 
     expect(screen.queryByText('API Key is required')).not.toBeInTheDocument();
@@ -110,7 +113,7 @@ describe('SimpleLayout Component', () => {
   it('calls Gemini API with selected model when model is changed', async () => {
     const mockService = createMockGeminiService({
       text: 'Gemini API response',
-      error: undefined
+      error: undefined,
     });
 
     vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -128,22 +131,27 @@ describe('SimpleLayout Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockService.generateContent).toHaveBeenCalledWith('Test payment text', 'gemini-2.5-flash');
+      expect(mockService.generateContent).toHaveBeenCalledWith(
+        'Test payment text',
+        'gemini-2.5-flash'
+      );
     });
   });
 
   it('shows loading state during API call', async () => {
-    const mockGenerateContent = vi.fn().mockImplementation(() =>
-      new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
-    );
+    const mockGenerateContent = vi
+      .fn()
+      .mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve({ text: 'Response' }), 100))
+      );
     const mockValidateResponse = vi.fn().mockResolvedValue({
       status: true,
-      message: 'Validation successful'
+      message: 'Validation successful',
     });
 
     vi.mocked(geminiService.createGeminiService).mockReturnValue({
       generateContent: mockGenerateContent,
-      validateResponse: mockValidateResponse
+      validateResponse: mockValidateResponse,
     } as any);
 
     render(<SimpleLayout />);
@@ -166,7 +174,7 @@ describe('SimpleLayout Component', () => {
   it('logs error when Gemini API returns error', async () => {
     const mockService = createMockGeminiService({
       text: '',
-      error: 'API Error'
+      error: 'API Error',
     });
 
     vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -207,8 +215,8 @@ describe('SimpleLayout Component', () => {
           currency: 'CZK',
           message: 'Test payment',
           payment_date: null,
-          variable_symbol: null
-        }
+          variable_symbol: null,
+        },
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -240,8 +248,8 @@ describe('SimpleLayout Component', () => {
           currency: 'CZK',
           message: null,
           payment_date: null,
-          variable_symbol: null
-        }
+          variable_symbol: null,
+        },
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -273,8 +281,8 @@ describe('SimpleLayout Component', () => {
           currency: 'CZK',
           message: 'Short account test',
           payment_date: null,
-          variable_symbol: 12345
-        }
+          variable_symbol: 12345,
+        },
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -306,8 +314,8 @@ describe('SimpleLayout Component', () => {
           currency: 'CZK',
           message: null,
           payment_date: null,
-          variable_symbol: null
-        }
+          variable_symbol: null,
+        },
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -332,17 +340,19 @@ describe('SimpleLayout Component', () => {
 
   describe('Component Disabled State During Loading', () => {
     it('disables all input components when isLoading is true', async () => {
-      const mockGenerateContent = vi.fn().mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
-      );
+      const mockGenerateContent = vi
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => setTimeout(() => resolve({ text: 'Response' }), 100))
+        );
       const mockValidateResponse = vi.fn().mockResolvedValue({
         status: true,
-        message: 'Validation successful'
+        message: 'Validation successful',
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue({
         generateContent: mockGenerateContent,
-        validateResponse: mockValidateResponse
+        validateResponse: mockValidateResponse,
       } as any);
 
       render(<SimpleLayout />);
@@ -381,17 +391,19 @@ describe('SimpleLayout Component', () => {
     });
 
     it('disables ApiKeyInput buttons when isLoading is true', async () => {
-      const mockGenerateContent = vi.fn().mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
-      );
+      const mockGenerateContent = vi
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => setTimeout(() => resolve({ text: 'Response' }), 100))
+        );
       const mockValidateResponse = vi.fn().mockResolvedValue({
         status: true,
-        message: 'Validation successful'
+        message: 'Validation successful',
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue({
         generateContent: mockGenerateContent,
-        validateResponse: mockValidateResponse
+        validateResponse: mockValidateResponse,
       } as any);
 
       render(<SimpleLayout />);
@@ -420,17 +432,19 @@ describe('SimpleLayout Component', () => {
     });
 
     it('disables PaymentTextInput textarea when isLoading is true', async () => {
-      const mockGenerateContent = vi.fn().mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({ text: 'Response' }), 100))
-      );
+      const mockGenerateContent = vi
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => setTimeout(() => resolve({ text: 'Response' }), 100))
+        );
       const mockValidateResponse = vi.fn().mockResolvedValue({
         status: true,
-        message: 'Validation successful'
+        message: 'Validation successful',
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue({
         generateContent: mockGenerateContent,
-        validateResponse: mockValidateResponse
+        validateResponse: mockValidateResponse,
       } as any);
 
       render(<SimpleLayout />);
@@ -476,8 +490,8 @@ describe('SimpleLayout Component', () => {
           currency: 'CZK',
           message: null,
           payment_date: null,
-          variable_symbol: null
-        }
+          variable_symbol: null,
+        },
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
@@ -511,8 +525,8 @@ describe('SimpleLayout Component', () => {
           currency: 'CZK',
           message: null,
           payment_date: null,
-          variable_symbol: null
-        }
+          variable_symbol: null,
+        },
       });
 
       vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);

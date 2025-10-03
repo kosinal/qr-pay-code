@@ -9,7 +9,12 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+    "check": "npm run format:check && npm run lint && npm run test"
   },
   "dependencies": {
     "@google/genai": "^1.21.0",
@@ -25,13 +30,23 @@
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.36.0",
     "@testing-library/jest-dom": "^6.9.0",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
     "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^6.1.0",
+    "eslint-plugin-react-refresh": "^0.4.23",
     "jsdom": "^27.0.0",
+    "prettier": "^3.6.2",
     "typescript": "~5.9.2",
     "vite": "^7.1.7",
     "vitest": "^3.2.4"

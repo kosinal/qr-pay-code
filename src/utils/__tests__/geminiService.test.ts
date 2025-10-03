@@ -6,9 +6,9 @@ const mockGenerateContent = vi.fn();
 vi.mock('@google/genai', () => ({
   GoogleGenAI: vi.fn().mockImplementation(() => ({
     models: {
-      generateContent: mockGenerateContent
-    }
-  }))
+      generateContent: mockGenerateContent,
+    },
+  })),
 }));
 
 describe('GeminiService', () => {
@@ -36,12 +36,10 @@ describe('GeminiService', () => {
         candidates: [
           {
             content: {
-              parts: [
-                { text: mockText }
-              ]
-            }
-          }
-        ]
+              parts: [{ text: mockText }],
+            },
+          },
+        ],
       });
 
       const result = await geminiService.generateContent(mockPrompt);
@@ -65,7 +63,7 @@ describe('GeminiService', () => {
         currency: 'CZK',
         payment_date: '2025-10-24',
         message: '',
-        variable_symbol: 6962100430
+        variable_symbol: 6962100430,
       };
       const mockText = JSON.stringify(mockPaymentData);
 
@@ -73,12 +71,10 @@ describe('GeminiService', () => {
         candidates: [
           {
             content: {
-              parts: [
-                { text: mockText }
-              ]
-            }
-          }
-        ]
+              parts: [{ text: mockText }],
+            },
+          },
+        ],
       });
 
       const result = await geminiService.generateContent(mockPrompt);
@@ -96,7 +92,7 @@ describe('GeminiService', () => {
         currency: 'CZK',
         payment_date: '2025-10-24',
         message: '',
-        variable_symbol: 6962100430
+        variable_symbol: 6962100430,
       };
       const mockText = '```json\n' + JSON.stringify(mockPaymentData, null, 2) + '\n```';
 
@@ -104,12 +100,10 @@ describe('GeminiService', () => {
         candidates: [
           {
             content: {
-              parts: [
-                { text: mockText }
-              ]
-            }
-          }
-        ]
+              parts: [{ text: mockText }],
+            },
+          },
+        ],
       });
 
       const result = await geminiService.generateContent(mockPrompt);
@@ -127,12 +121,10 @@ describe('GeminiService', () => {
         candidates: [
           {
             content: {
-              parts: [
-                { text: mockText }
-              ]
-            }
-          }
-        ]
+              parts: [{ text: mockText }],
+            },
+          },
+        ],
       });
 
       const result = await geminiService.generateContent(mockPrompt);
@@ -140,7 +132,10 @@ describe('GeminiService', () => {
       expect(result.text).toBe(mockText);
       expect(result.paymentData).toBeUndefined();
       expect(result.error).toBeUndefined();
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to parse payment data from response:', expect.any(Error));
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Failed to parse payment data from response:',
+        expect.any(Error)
+      );
 
       consoleWarnSpy.mockRestore();
     });
@@ -154,7 +149,7 @@ describe('GeminiService', () => {
 
       expect(result).toEqual({
         text: '',
-        error: 'API Error'
+        error: 'API Error',
       });
     });
 
@@ -165,13 +160,13 @@ describe('GeminiService', () => {
 
       expect(result).toEqual({
         text: '',
-        error: 'Unknown error occurred'
+        error: 'Unknown error occurred',
       });
     });
 
     it('handles empty response', async () => {
       mockGenerateContent.mockResolvedValue({
-        candidates: []
+        candidates: [],
       });
 
       const result = await geminiService.generateContent(mockPrompt);
@@ -188,12 +183,10 @@ describe('GeminiService', () => {
         candidates: [
           {
             content: {
-              parts: [
-                { text: mockText }
-              ]
-            }
-          }
-        ]
+              parts: [{ text: mockText }],
+            },
+          },
+        ],
       });
 
       const result = await geminiService.generateContent(mockPrompt, customModel);
@@ -216,12 +209,10 @@ describe('GeminiService', () => {
         candidates: [
           {
             content: {
-              parts: [
-                { text: mockText }
-              ]
-            }
-          }
-        ]
+              parts: [{ text: mockText }],
+            },
+          },
+        ],
       });
 
       await geminiService.generateContent(mockPrompt);

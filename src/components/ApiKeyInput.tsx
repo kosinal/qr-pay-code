@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import type { ChangeEvent } from 'react';
+import React, { useState, useEffect, type ChangeEvent } from 'react';
 import { Form, InputGroup, Button } from 'react-bootstrap';
-import { FaEye, FaEyeSlash  } from "react-icons/fa";
-import { MdClear } from "react-icons/md";
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { MdClear } from 'react-icons/md';
 
 interface ApiKeyInputProps {
   onApiKeyChange?: (apiKey: string) => void;
@@ -15,10 +13,10 @@ interface ApiKeyInputProps {
 
 export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
   onApiKeyChange,
-  placeholder = "Enter your API key",
-  className = "",
+  placeholder = 'Enter your API key',
+  className = '',
   isInvalid = false,
-  disabled = false
+  disabled = false,
 }) => {
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
@@ -68,17 +66,17 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
           disabled={disabled}
         />
         <Button
-            variant="outline-secondary"
-            onClick={() => setShowKey(!showKey)}
-            aria-label={showKey ? "Hide API key" : "Show API key"}
-            disabled={disabled}
+          variant="outline-secondary"
+          onClick={() => setShowKey(!showKey)}
+          aria-label={showKey ? 'Hide API key' : 'Show API key'}
+          disabled={disabled}
         >
           {showKey ? <FaEyeSlash /> : <FaEye />}
         </Button>
         {apiKey && (
-            <Button
-                variant="outline-danger"
-                onClick={clearApiKey}
+          <Button
+            variant="outline-danger"
+            onClick={clearApiKey}
             aria-label="Clear API key"
             disabled={disabled}
           >

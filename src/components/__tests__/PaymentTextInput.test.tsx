@@ -10,26 +10,23 @@ describe('PaymentTextInput Component', () => {
   });
 
   it('renders correctly with textarea', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} />);
 
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('displays placeholder text', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} />);
 
     const textarea = screen.getByRole('textbox');
-    expect(textarea).toHaveAttribute('placeholder', expect.stringContaining('Enter payment information'));
+    expect(textarea).toHaveAttribute(
+      'placeholder',
+      expect.stringContaining('Enter payment information')
+    );
   });
 
   it('updates text when text is entered', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} />);
 
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
     fireEvent.input(textarea, { target: { value: 'Test payment info' } });
@@ -38,9 +35,7 @@ describe('PaymentTextInput Component', () => {
   });
 
   it('calls onChange with updated text', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} />);
 
     const textarea = screen.getByRole('textbox');
     const testText = 'Payment for services rendered';
@@ -50,11 +45,8 @@ describe('PaymentTextInput Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
-
   it('handles empty text correctly', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} />);
 
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
 
@@ -70,12 +62,11 @@ describe('PaymentTextInput Component', () => {
   });
 
   it('handles special characters and formatting', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} />);
 
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
-    const specialText = 'Amount: $100.00\nCurrency: USD\nRecipient: John Smith\nDescription: Invoice #12345';
+    const specialText =
+      'Amount: $100.00\nCurrency: USD\nRecipient: John Smith\nDescription: Invoice #12345';
     fireEvent.input(textarea, { target: { value: specialText } });
 
     expect(textarea).toHaveValue(specialText);
@@ -83,9 +74,7 @@ describe('PaymentTextInput Component', () => {
   });
 
   it('handles very long text input', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} />);
 
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
     const longText = 'A'.repeat(1000);
@@ -96,24 +85,18 @@ describe('PaymentTextInput Component', () => {
   });
 
   it('displays validation error when isInvalid is true', () => {
-    render(
-      <PaymentTextInput onChange={mockOnChange} isInvalid={true} />
-    );
+    render(<PaymentTextInput onChange={mockOnChange} isInvalid={true} />);
 
     expect(screen.getByText('Payment text is required')).toBeInTheDocument();
   });
 
   it('accepts controlled value prop', () => {
-    const { rerender } = render(
-      <PaymentTextInput value="Initial value" onChange={mockOnChange} />
-    );
+    const { rerender } = render(<PaymentTextInput value="Initial value" onChange={mockOnChange} />);
 
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
     expect(textarea).toHaveValue('Initial value');
 
-    rerender(
-      <PaymentTextInput value="Updated value" onChange={mockOnChange} />
-    );
+    rerender(<PaymentTextInput value="Updated value" onChange={mockOnChange} />);
 
     expect(textarea).toHaveValue('Updated value');
   });
@@ -124,7 +107,6 @@ describe('PaymentTextInput Component', () => {
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
     expect(textarea).toBeDisabled();
   });
-
 
   it('allows interaction when disabled prop is false', () => {
     render(<PaymentTextInput disabled={false} onChange={mockOnChange} />);

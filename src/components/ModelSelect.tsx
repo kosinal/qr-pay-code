@@ -14,7 +14,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
   value = 'gemini-2.5-pro',
   onChange,
   className = '',
-  disabled = false
+  disabled = false,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (!disabled) {
@@ -24,9 +24,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
 
   return (
     <Form.Group className={`model-select ${className}`}>
-      <Form.Label htmlFor="model-select">
-        Gemini Model
-      </Form.Label>
+      <Form.Label htmlFor="model-select">Gemini Model</Form.Label>
       <Form.Select
         id="model-select"
         value={value}

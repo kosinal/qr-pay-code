@@ -7,10 +7,7 @@ interface QRCodeDisplayProps {
   className?: string;
 }
 
-export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
-  spaydString,
-  className = ''
-}) => {
+export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, className = '' }) => {
   if (!spaydString) {
     return null;
   }
@@ -28,9 +25,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
             data-testid="qr-code"
           />
         </div>
-        <Card.Text className="text-muted small">
-          Scan this QR code to make the payment
-        </Card.Text>
+        <Card.Text className="text-muted small">Scan this QR code to make the payment</Card.Text>
       </Card.Body>
     </Card>
   );

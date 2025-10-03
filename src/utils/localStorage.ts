@@ -27,7 +27,7 @@ export const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
   const storage = getLocalStorage();
   try {
     const item = storage.getItem(key);
-    return item === null ? defaultValue : JSON.parse(item) as T;
+    return item === null ? defaultValue : (JSON.parse(item) as T);
   } catch (error) {
     console.warn(`Error reading from localStorage key "${key}":`, error);
     return defaultValue;
@@ -68,7 +68,7 @@ export const isLocalStorageAvailable = (): boolean => {
     storage.setItem(testKey, 'test');
     storage.removeItem(testKey);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
