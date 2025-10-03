@@ -31,7 +31,18 @@ export const SimpleLayout: React.FC = () => {
     }
   };
 
-  const validateBankInformation = (paymentData: any): boolean => {
+  interface PaymentData {
+    account_number?: string;
+    bank_code?: string;
+    branch_code?: string;
+    amount?: number | null;
+    currency?: string;
+    message?: string;
+    payment_date?: string;
+    variable_symbol?: number | null;
+  }
+
+  const validateBankInformation = (paymentData: PaymentData): boolean => {
     if (!paymentData.account_number || !paymentData.bank_code) {
       setErrorMessage(
         'Unable to find bank information (account number or bank code) in the payment data.'
@@ -57,7 +68,7 @@ export const SimpleLayout: React.FC = () => {
     return { account, branch };
   };
 
-  const buildIban = (paymentData: any) => {
+  const buildIban = (paymentData: PaymentData) => {
     return new IBANBuilder()
       .countryCode(CountryCode.CZ)
       .bankCode(paymentData.bank_code)
@@ -66,8 +77,8 @@ export const SimpleLayout: React.FC = () => {
       .build();
   };
 
-  const buildSpaydAttributes = (paymentData: any, ibanString: string) => {
-    const spaydAttributes: any = {
+  const buildSpaydAttributes = (paymentData: PaymentData, ibanString: string) => {
+    const spaydAttributes: Record<string, unknown> = {
       acc: ibanString,
     };
 
@@ -96,7 +107,7 @@ export const SimpleLayout: React.FC = () => {
     return spaydAttributes;
   };
 
-  const processPaymentData = (paymentData: any): void => {
+  const processPaymentData = (paymentData: PaymentData): void => {
     if (!validateBankInformation(paymentData)) {
       return;
     }
@@ -125,7 +136,23 @@ export const SimpleLayout: React.FC = () => {
     }
   };
 
-  const handleApiResponse = async (response: any, geminiService: any): Promise<void> => {
+  interface GeminiResponse {
+    error?: string;
+    paymentData?: PaymentData;
+  }
+
+  interface GeminiService {
+    validateResponse: (
+      text: string,
+      response: GeminiResponse,
+      model: GeminiModel
+    ) => Promise<{ status: boolean; message: string }>;
+  }
+
+  const handleApiResponse = async (
+    response: GeminiResponse,
+    geminiService: GeminiService
+  ): Promise<void> => {
     if (response.error) {
       console.error('Gemini API Error:', response.error);
       const errorMsg = parseApiError(response.error);
