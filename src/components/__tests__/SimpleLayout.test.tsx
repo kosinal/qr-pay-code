@@ -462,9 +462,8 @@ describe('SimpleLayout Component', () => {
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
+        expect(textarea).toBeDisabled();
       });
-
-      expect(textarea).toBeDisabled();
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
