@@ -475,6 +475,110 @@ describe('SimpleLayout Component', () => {
     });
   });
 
+  describe('Payment Symbols', () => {
+    it('includes constant_symbol in payment data when provided', async () => {
+      const mockService = createMockGeminiService({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '1234567890',
+          bank_code: '0800',
+          amount: 500,
+          currency: 'CZK',
+          message: 'Test payment',
+          payment_date: null,
+          variable_symbol: null,
+          constant_symbol: 3558,
+        },
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Payment with constant symbol' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockService.generateContent).toHaveBeenCalled();
+        const qrCode = screen.queryByTestId('qr-code');
+        expect(qrCode).toBeInTheDocument();
+      });
+    });
+
+    it('includes both variable_symbol and constant_symbol when both provided', async () => {
+      const mockService = createMockGeminiService({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '1234567890',
+          bank_code: '0800',
+          amount: 1500,
+          currency: 'CZK',
+          message: 'Payment with both symbols',
+          payment_date: null,
+          variable_symbol: 12345,
+          constant_symbol: 3558,
+        },
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Payment with both symbols' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockService.generateContent).toHaveBeenCalled();
+        const qrCode = screen.queryByTestId('qr-code');
+        expect(qrCode).toBeInTheDocument();
+      });
+    });
+
+    it('handles null constant_symbol correctly', async () => {
+      const mockService = createMockGeminiService({
+        text: 'Gemini API response',
+        paymentData: {
+          account_number: '1234567890',
+          bank_code: '0800',
+          amount: 750,
+          currency: 'CZK',
+          message: null,
+          payment_date: null,
+          variable_symbol: null,
+          constant_symbol: null,
+        },
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Payment without constant symbol' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockService.generateContent).toHaveBeenCalled();
+        const qrCode = screen.queryByTestId('qr-code');
+        expect(qrCode).toBeInTheDocument();
+      });
+    });
+  });
+
   describe('QR Code Display Integration', () => {
     it('does not show QR code initially', () => {
       render(<SimpleLayout />);

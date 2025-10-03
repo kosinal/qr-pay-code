@@ -81,4 +81,33 @@ describe('QRCodeDisplay Component', () => {
     const description = screen.getByText('Scan this QR code to make the payment');
     expect(description).toBeInTheDocument();
   });
+
+  it('renders QR code with constant_symbol in SPAYD string', () => {
+    const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890*AM:500.00*CC:CZK*X-KS:3558';
+    render(<QRCodeDisplay spaydString={spaydString} />);
+
+    const qrCode = screen.getByTestId('qr-code');
+    expect(qrCode).toBeInTheDocument();
+    expect(qrCode).toHaveAttribute('aria-label', spaydString);
+  });
+
+  it('renders QR code with both variable_symbol and constant_symbol in SPAYD string', () => {
+    const spaydString =
+      'SPD*1.0*ACC:CZ0708000000001234567890*AM:1500.00*CC:CZK*X-VS:12345*X-KS:3558';
+    render(<QRCodeDisplay spaydString={spaydString} />);
+
+    const qrCode = screen.getByTestId('qr-code');
+    expect(qrCode).toBeInTheDocument();
+    expect(qrCode).toHaveAttribute('aria-label', spaydString);
+  });
+
+  it('renders QR code without constant_symbol when not provided', () => {
+    const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890*AM:750.00*CC:CZK';
+    render(<QRCodeDisplay spaydString={spaydString} />);
+
+    const qrCode = screen.getByTestId('qr-code');
+    expect(qrCode).toBeInTheDocument();
+    expect(qrCode).toHaveAttribute('aria-label', spaydString);
+    expect(qrCode.getAttribute('aria-label')).not.toContain('X-KS');
+  });
 });

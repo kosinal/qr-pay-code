@@ -320,8 +320,6 @@ export class GeminiService {
           console.warn('Failed to parse payment data from response:', parseError);
         }
       }
-      console.log(finalPrompt);
-      console.log(paymentData);
       return { text, paymentData };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -368,7 +366,6 @@ export class GeminiService {
         const jsonMatch =
           text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
         const jsonString = jsonMatch ? jsonMatch[1] : text;
-        console.log(jsonString.trim());
         return JSON.parse(jsonString.trim()) as ValidationResponse;
       } catch (parseError) {
         console.warn('Failed to parse validation response:', parseError);

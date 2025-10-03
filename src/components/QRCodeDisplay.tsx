@@ -23,6 +23,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, class
             level="M"
             marginSize={4}
             data-testid="qr-code"
+            aria-label={spaydString}
           />
         </div>
         <Card.Text className="text-muted small">Scan this QR code to make the payment</Card.Text>
