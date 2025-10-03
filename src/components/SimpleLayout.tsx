@@ -287,9 +287,9 @@ export const SimpleLayout: React.FC = () => {
           <ApiKeyInput
             placeholder="Enter your Gemini API key"
             onApiKeyChange={(key) => setApiKey(key)}
+            disabled={loadingState !== null}
             className="mb-4"
             isInvalid={showValidation && !apiKey}
-            disabled={loadingState !== null}
           />
           <ModelSelect
             value={selectedModel}
