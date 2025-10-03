@@ -36,6 +36,8 @@ export default [
         HTMLTextAreaElement: 'readonly',
         Storage: 'readonly',
         setTimeout: 'readonly',
+        File: 'readonly',
+        FileReader: 'readonly',
       },
     },
     plugins: {

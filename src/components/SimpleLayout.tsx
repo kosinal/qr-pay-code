@@ -5,10 +5,12 @@ import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { LoadingOverlay } from './LoadingOverlay';
+import { ImageInput } from './ImageInput';
 import {
   createGeminiService,
   type GeminiResponse,
   type GeminiService,
+  type OCRResponse,
 } from '../utils/geminiService';
 import { IBANBuilder, CountryCode } from 'ibankit';
 import { createShortPaymentDescriptor } from '@spayd/core';
@@ -29,7 +31,7 @@ interface SpaydPaymentAttributes {
   };
 }
 
-type LoadingState = 'analyzing' | 'validating' | null;
+type LoadingState = 'ocr' | 'analyzing' | 'validating' | null;
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
@@ -176,6 +178,36 @@ export const SimpleLayout: React.FC = () => {
     }
   };
 
+  const handleImageSelect = async (imageFile: File) => {
+    if (!apiKey) {
+      setErrorMessage('Please enter your Gemini API key first to process the image.');
+      return;
+    }
+
+    setErrorMessage(null);
+    setLoadingState('ocr');
+
+    try {
+      const geminiService = createGeminiService(apiKey);
+      const ocrResult: OCRResponse = await geminiService.processImageOCR(imageFile, selectedModel);
+
+      if (ocrResult.error) {
+        setErrorMessage(`OCR Error: ${ocrResult.error}`);
+      } else if (ocrResult.text) {
+        // Prefill the text area with OCR result
+        setPaymentText(ocrResult.text);
+      } else {
+        setErrorMessage('No text could be extracted from the image.');
+      }
+    } catch (error) {
+      console.error('Error processing image:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to process image';
+      setErrorMessage(errorMsg);
+    } finally {
+      setLoadingState(null);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!apiKey || !paymentText) {
       setShowValidation(true);
@@ -200,11 +232,22 @@ export const SimpleLayout: React.FC = () => {
     }
   };
 
+  const getLoadingMessage = (state: LoadingState): string => {
+    switch (state) {
+      case 'ocr':
+        return 'Processing image...';
+      case 'analyzing':
+        return 'Analyzing...';
+      case 'validating':
+        return 'Validating...';
+      default:
+        return '';
+    }
+  };
+
   return (
     <>
-      {loadingState && (
-        <LoadingOverlay message={loadingState === 'analyzing' ? 'Analyzing...' : 'Validating...'} />
-      )}
+      {loadingState && <LoadingOverlay message={getLoadingMessage(loadingState)} />}
       <Card className="shadow-lg" style={{ backgroundColor: 'rgba(45, 45, 45, 0.85)' }}>
         <Card.Body className="p-4">
           {errorMessage && (
@@ -241,6 +284,11 @@ export const SimpleLayout: React.FC = () => {
             className="mb-4"
             isInvalid={showValidation && !apiKey}
             disabled={loadingState !== null}
+          />
+          <ImageInput
+            onImageSelect={handleImageSelect}
+            disabled={loadingState !== null}
+            className="mb-4"
           />
           <ModelSelect
             value={selectedModel}

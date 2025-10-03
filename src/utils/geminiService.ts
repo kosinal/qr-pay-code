@@ -12,6 +12,11 @@ export interface ValidationResponse {
   message: string;
 }
 
+export interface OCRResponse {
+  text: string;
+  error?: string;
+}
+
 // ============================================================================
 // PROMPT TEMPLATE - Edit this to customize the prompt sent to Gemini
 // ============================================================================
@@ -93,6 +98,20 @@ Respond with a JSON object in this exact format:
 Set status to true if the extracted data accurately represents the original input.
 Set status to false if there are hallucinations, significant errors, or critical missing information.
 Provide a clear message explaining your assessment.`;
+// ============================================================================
+
+// ============================================================================
+// OCR PROMPT TEMPLATE - Used for extracting text from images
+// ============================================================================
+const OCR_PROMPT_TEMPLATE = `You are an OCR expert. Extract ALL text content from the provided image accurately.
+
+Your task:
+1. Read all visible text in the image
+2. Maintain the original formatting and structure as much as possible
+3. Include all numbers, dates, account information, and payment details
+4. Do not interpret or summarize - extract exactly what you see
+
+Return only the extracted text without any additional commentary or formatting.`;
 // ============================================================================
 
 export class GeminiService {
@@ -220,6 +239,64 @@ export class GeminiService {
       return {
         status: false,
         message: error instanceof Error ? error.message : 'Validation failed',
+      };
+    }
+  }
+
+  /**
+   * Converts a File object to base64 string
+   */
+  private async fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        // Remove data:image/...;base64, prefix
+        const base64Data = base64String.split(',')[1];
+        resolve(base64Data);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /**
+   * Performs OCR on an image to extract text content
+   */
+  async processImageOCR(imageFile: File, model: string = 'gemini-2.5-flash'): Promise<OCRResponse> {
+    try {
+      // Convert image to base64
+      const base64Data = await this.fileToBase64(imageFile);
+
+      // Get mime type from file
+      const mimeType = imageFile.type;
+
+      // Create content with image and OCR prompt
+      const result = await this.genai.models.generateContent({
+        model,
+        contents: [
+          {
+            parts: [
+              { text: OCR_PROMPT_TEMPLATE },
+              {
+                inlineData: {
+                  mimeType,
+                  data: base64Data,
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+      return { text };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'OCR processing failed';
+      return {
+        text: '',
+        error: errorMessage,
       };
     }
   }
