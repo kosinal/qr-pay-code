@@ -16,7 +16,7 @@ A modern web application that generates QR codes for Czech bank payments using A
 
 ## 🚀 Live Demo
 
-Visit the live application: [QR Pay Code Generator](https://yourusername.github.io/qr-pay-code/)
+Visit the live application: [QR Pay Code Generator](https://kosinal.github.io/qr-pay-code/)
 
 ## 🛠️ Tech Stack
 
