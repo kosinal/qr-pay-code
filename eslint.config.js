@@ -101,6 +101,8 @@ export default [
         afterEach: 'readonly',
         vi: 'readonly',
         test: 'readonly',
+        Event: 'readonly',
+        global: 'readonly',
       },
     },
     rules: {

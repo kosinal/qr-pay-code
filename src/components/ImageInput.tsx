@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import { BsFileImage, BsCamera } from 'react-icons/bs';
+import { useIsMobile } from '../hooks/useIsMobile';
 import './ImageInput.css';
 
 interface ImageInputProps {
@@ -17,6 +18,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -98,16 +100,18 @@ export const ImageInput: React.FC<ImageInputProps> = ({
             variant="outline-secondary"
             onClick={handleUploadClick}
             disabled={disabled}
-            className="me-2"
+            className={isMobile ? 'me-2' : ''}
           >
             <BsFileImage className="me-1" />
             Upload Image
           </Button>
 
-          <Button variant="outline-secondary" onClick={handleCameraClick} disabled={disabled}>
-            <BsCamera className="me-1" />
-            Take Photo
-          </Button>
+          {isMobile && (
+            <Button variant="outline-secondary" onClick={handleCameraClick} disabled={disabled}>
+              <BsCamera className="me-1" />
+              Take Photo
+            </Button>
+          )}
         </div>
       )}
 
