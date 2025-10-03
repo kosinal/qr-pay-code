@@ -8,5 +8,17 @@ export default defineConfig({
     watch: {
       usePolling: true
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'bootstrap-vendor': ['bootstrap', 'react-bootstrap'],
+          'qr-vendor': ['qrcode.react'],
+          'utils-vendor': ['@spayd/core', 'ibankit', '@google/genai']
+        }
+      }
+    }
   }
 } as any)
