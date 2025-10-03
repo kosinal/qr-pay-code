@@ -4,6 +4,7 @@ import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
 import { QRCodeDisplay } from './QRCodeDisplay';
+import { LoadingOverlay } from './LoadingOverlay';
 import {
   createGeminiService,
   type GeminiResponse,
@@ -28,12 +29,14 @@ interface SpaydPaymentAttributes {
   };
 }
 
+type LoadingState = 'analyzing' | 'validating' | null;
+
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
   const [paymentText, setPaymentText] = useState('');
   const [selectedModel, setSelectedModel] = useState<GeminiModel>('gemini-2.5-pro');
   const [showValidation, setShowValidation] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState<LoadingState>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [validationWarning, setValidationWarning] = useState<string | null>(null);
   const [spaydString, setSpaydString] = useState<string | null>(null);
@@ -156,6 +159,9 @@ export const SimpleLayout: React.FC = () => {
     }
 
     if (response.paymentData) {
+      // Set validating state before validation
+      setLoadingState('validating');
+
       // Validate response for hallucinations
       const validation = await geminiService.validateResponse(paymentText, response, selectedModel);
 
@@ -179,7 +185,7 @@ export const SimpleLayout: React.FC = () => {
     setShowValidation(false);
     setErrorMessage(null);
     setValidationWarning(null);
-    setIsLoading(true);
+    setLoadingState('analyzing');
 
     try {
       const geminiService = createGeminiService(apiKey);
@@ -190,12 +196,15 @@ export const SimpleLayout: React.FC = () => {
       const errorMsg = error instanceof Error ? error.message : 'An unknown error occurred';
       setErrorMessage(errorMsg);
     } finally {
-      setIsLoading(false);
+      setLoadingState(null);
     }
   };
 
   return (
     <>
+      {loadingState && (
+        <LoadingOverlay message={loadingState === 'analyzing' ? 'Analyzing...' : 'Validating...'} />
+      )}
       <Card className="shadow-lg" style={{ backgroundColor: 'rgba(45, 45, 45, 0.85)' }}>
         <Card.Body className="p-4">
           {errorMessage && (
@@ -224,24 +233,29 @@ export const SimpleLayout: React.FC = () => {
             value={paymentText}
             onChange={setPaymentText}
             isInvalid={showValidation && !paymentText}
-            disabled={isLoading}
+            disabled={loadingState !== null}
           />
           <ApiKeyInput
             placeholder="Enter your Gemini API key"
             onApiKeyChange={(key) => setApiKey(key)}
             className="mb-4"
             isInvalid={showValidation && !apiKey}
-            disabled={isLoading}
+            disabled={loadingState !== null}
           />
           <ModelSelect
             value={selectedModel}
             onChange={setSelectedModel}
             className="mb-4"
-            disabled={isLoading}
+            disabled={loadingState !== null}
           />
           <div className="d-flex justify-content-end mt-3">
-            <Button variant="primary" size="lg" onClick={handleSubmit} disabled={isLoading}>
-              {isLoading ? 'Processing...' : 'Generate QR Code'}
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={handleSubmit}
+              disabled={loadingState !== null}
+            >
+              {loadingState !== null ? 'Processing...' : 'Generate QR Code'}
             </Button>
           </div>
         </Card.Body>

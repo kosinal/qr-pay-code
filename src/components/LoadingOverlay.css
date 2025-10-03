@@ -1,0 +1,32 @@
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.loading-spinner {
+  width: 4rem;
+  height: 4rem;
+  color: var(--bs-primary, #0d6efd);
+}
+
+.loading-text {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-primary, #ffffff);
+  text-align: center;
+}
