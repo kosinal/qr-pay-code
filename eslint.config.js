@@ -9,7 +9,7 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['dist', 'node_modules', 'coverage', '*.config.js', 'vite.config.ts', 'public/**/*'],
+    ignores: ['dist', 'dev-dist', 'node_modules', 'coverage', '*.config.js', 'vite.config.ts', 'public/**/*'],
   },
   js.configs.recommended,
   {

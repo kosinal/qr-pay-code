@@ -28,6 +28,7 @@ interface SpaydPaymentAttributes {
   dt?: Date;
   x?: {
     vs?: string;
+    ks?: string;
   };
 }
 
@@ -113,7 +114,15 @@ export const SimpleLayout: React.FC = () => {
 
     if (paymentData.variable_symbol !== null && paymentData.variable_symbol !== undefined) {
       spaydAttributes.x = {
+        ...spaydAttributes.x,
         vs: paymentData.variable_symbol.toString(),
+      };
+    }
+
+    if (paymentData.constant_symbol !== null && paymentData.constant_symbol !== undefined) {
+      spaydAttributes.x = {
+        ...spaydAttributes.x,
+        ks: paymentData.constant_symbol.toString(),
       };
     }
 

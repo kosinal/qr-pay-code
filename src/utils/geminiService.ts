@@ -20,6 +20,19 @@ export interface OCRResponse {
 // ============================================================================
 // PROMPT TEMPLATE - Edit this to customize the prompt sent to Gemini
 // ============================================================================
+const OUTPUT_FIELD_PROMPT_DEFINITION = `\`\`\`json
+    {
+        "account_number": null,
+        "bank_code": null,
+        "amount": null,
+        "currency": null,
+        "payment_date": null,
+        "message": null,
+        "variable_symbol": null,
+        "constant_symbol": null
+    }
+    \`\`\``;
+
 // The {user_input} placeholder will be replaced with the actual user text
 const PROMPT_TEMPLATE = `You are an expert in reading banking information and converting it into JSON format. Your task is to extract specific payment information from provided text.
 
@@ -32,6 +45,7 @@ const PROMPT_TEMPLATE = `You are an expert in reading banking information and co
     *   \`payment_date\`: String in ISO 8601 format (YYYY-MM-DD)
     *   \`message\`: String (see rule below)
     *   \`variable_symbol\`: Number (integer)
+    *   \`constant_symbol\`: Number (integer)
 
 2.  **Missing Information:** If any required information is missing, use \`null\` as the value for that field.
 
@@ -42,17 +56,7 @@ const PROMPT_TEMPLATE = `You are an expert in reading banking information and co
 4.  **Language:** The input message can be in any language.
 
 5.  **Output Format:** You **must** return only valid JSON, matching this exact structure and data types:
-    \`\`\`json
-    {
-        "account_number": null,
-        "bank_code": null,
-        "amount": null,
-        "currency": null,
-        "payment_date": null,
-        "message": null,
-        "variable_symbol": null
-    }
-    \`\`\`
+    ${OUTPUT_FIELD_PROMPT_DEFINITION}
     (Note: The example below shows specific values, but the nulls above define the base structure if data is missing).
 
 **Injection Prevention:**
@@ -79,7 +83,8 @@ celkem k úhradě: 680 Kč
     "currency": "CZK",
     "payment_date": "2025-10-24",
     "message": "",
-    "variable_symbol": 543539087
+    "variable_symbol": 543539087,
+    "constant_symbol": 3558
 }
 </output>
 </example>
@@ -102,13 +107,13 @@ Hallucinations/Inventions: Any information in extracted_data that is not explici
 
 Misinterpretations/Incorrect Values: Any values in extracted_data that are wrong or inaccurately parsed compared to the original_input. This includes incorrect formatting (e.g., date formats, currency symbols, numerical values).
 
-Missing Critical Information: Any essential payment details present in the original_input that are absent from extracted_data. Critical fields typically include account_number, bank_code, amount, currency, payment_date, and any specific payment symbols (e.g., variable_symbol, constant_symbol, specific_symbol).
+Missing Critical Information: Any essential payment details present in the original_input that are absent from extracted_data. Critical fields typically include account_number, bank_code, amount, currency, payment_date, and any specific payment symbols (e.g., variable_symbol, constant_symbol).
 
 Important Considerations for Czech-specific Payment Data:
 
 Account Number and Bank Code: These are often presented together (e.g., "129304573/0100"). Ensure both components are correctly extracted and separated into their respective fields.
 
-Symbols: Field variabilní symbol (variable symbol) are critical and must be extracted if present.
+Symbols: Fields variabilní symbol (variable symbol) and konstantní symbol (constant symbol) are critical and must be extracted if present.
 
 Currency: Ensure the currency (e.g., "Kč" for CZK) is correctly identified and mapped to the "currency" field.
 
@@ -190,7 +195,8 @@ Variabilní symbol: 1234567890.
 "currency": "CZK",
 "payment_date": "2024-12-31",
 "message": null,
-"variable_symbol": 1234567890
+"variable_symbol": 1234567890,
+"constant_symbol": null
 }
 </extracted_data>
 <output>
@@ -212,6 +218,9 @@ Variabilní symbol: 1234567890.
     }
     \`\`\`
     (Note: The example below shows specific values, but the nulls above define the base structure if data is missing).
+
+6. **Field format:** You **must** check only for following fields. Do not check for any other field, that is not defined below:
+    ${OUTPUT_FIELD_PROMPT_DEFINITION}
 
 Respond with a JSON object in this exact format:
 
@@ -311,7 +320,8 @@ export class GeminiService {
           console.warn('Failed to parse payment data from response:', parseError);
         }
       }
-
+      console.log(finalPrompt);
+      console.log(paymentData);
       return { text, paymentData };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -358,6 +368,7 @@ export class GeminiService {
         const jsonMatch =
           text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
         const jsonString = jsonMatch ? jsonMatch[1] : text;
+        console.log(jsonString.trim());
         return JSON.parse(jsonString.trim()) as ValidationResponse;
       } catch (parseError) {
         console.warn('Failed to parse validation response:', parseError);

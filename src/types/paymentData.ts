@@ -7,4 +7,5 @@ export interface PaymentData {
   payment_date: string | null;
   message: string | null;
   variable_symbol: number | null;
+  constant_symbol: number | null;
 }
