@@ -277,6 +277,12 @@ export const SimpleLayout: React.FC = () => {
             onChange={setPaymentText}
             isInvalid={showValidation && !paymentText}
             disabled={loadingState !== null}
+            className="mb-4"
+          />
+          <ImageInput
+            onImageSelect={handleImageSelect}
+            disabled={loadingState !== null}
+            className="mb-4"
           />
           <ApiKeyInput
             placeholder="Enter your Gemini API key"
@@ -284,11 +290,6 @@ export const SimpleLayout: React.FC = () => {
             className="mb-4"
             isInvalid={showValidation && !apiKey}
             disabled={loadingState !== null}
-          />
-          <ImageInput
-            onImageSelect={handleImageSelect}
-            disabled={loadingState !== null}
-            className="mb-4"
           />
           <ModelSelect
             value={selectedModel}

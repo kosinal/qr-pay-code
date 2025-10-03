@@ -6,6 +6,7 @@ interface PaymentTextInputProps {
   onChange?: (text: string) => void;
   isInvalid?: boolean;
   disabled?: boolean;
+  className?: string;
 }
 
 export const PaymentTextInput: React.FC<PaymentTextInputProps> = ({
@@ -13,6 +14,7 @@ export const PaymentTextInput: React.FC<PaymentTextInputProps> = ({
   onChange,
   isInvalid = false,
   disabled = false,
+  className = '',
 }) => {
   const [paymentText, setPaymentText] = useState('');
   const value = externalValue !== undefined ? externalValue : paymentText;
@@ -26,19 +28,12 @@ export const PaymentTextInput: React.FC<PaymentTextInputProps> = ({
   };
 
   return (
-    <Form.Group className="payment-text-input">
+    <Form.Group className={`payment-text-input ${className}`}>
       <Form.Control
         as="textarea"
         value={value}
         onChange={handleTextChange}
-        placeholder={`Enter payment information here...
-
-Example format:
-Amount: 50.00
-Currency: EUR
-Recipient: John Doe
-Description: Payment for services
-Reference: INV-001`}
+        placeholder={`Enter payment information here...`}
         rows={8}
         className="payment-textarea"
         isInvalid={isInvalid}

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=/qr-pay-code/" />
+    <script>
+      // SPA redirect for client-side routing
+      sessionStorage.setItem('redirect', location.pathname + location.search + location.hash);
+      location.replace('/qr-pay-code/');
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>
