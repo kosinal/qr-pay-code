@@ -376,9 +376,11 @@ describe('SimpleLayout Component', () => {
         expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
       });
 
-      expect(apiKeyInput).toBeDisabled();
-      expect(modelSelect).toBeDisabled();
-      expect(textarea).toBeDisabled();
+      await waitFor(() => {
+        expect(apiKeyInput).toBeDisabled();
+        expect(modelSelect).toBeDisabled();
+        expect(textarea).toBeDisabled();
+      });
 
       // After loading completes, components should be enabled again
       await waitFor(() => {
@@ -423,8 +425,10 @@ describe('SimpleLayout Component', () => {
       const showButton = screen.getByRole('button', { name: /show api key/i });
       const clearButton = screen.getByRole('button', { name: /clear api key/i });
 
-      expect(showButton).toBeDisabled();
-      expect(clearButton).toBeDisabled();
+      await waitFor(() => {
+        expect(showButton).toBeDisabled();
+        expect(clearButton).toBeDisabled();
+      });
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
