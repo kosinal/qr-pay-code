@@ -4,13 +4,29 @@ import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
 import { QRCodeDisplay } from './QRCodeDisplay';
-import { createGeminiService } from '../utils/geminiService';
+import {
+  createGeminiService,
+  type GeminiResponse,
+  type GeminiService,
+} from '../utils/geminiService';
 import { IBANBuilder, CountryCode } from 'ibankit';
 import { createShortPaymentDescriptor } from '@spayd/core';
 import './SimpleLayout.css';
 import './ApiKeyInput.css';
 import './PaymentTextInput.css';
 import { FAQAccordion } from './FAQAccordion.tsx';
+import type { PaymentData } from '../types/paymentData';
+
+interface SpaydPaymentAttributes {
+  acc: string;
+  am?: string;
+  cc?: string;
+  msg?: string;
+  dt?: Date;
+  x?: {
+    vs?: string;
+  };
+}
 
 export const SimpleLayout: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
@@ -30,17 +46,6 @@ export const SimpleLayout: React.FC = () => {
       return error;
     }
   };
-
-  interface PaymentData {
-    account_number?: string;
-    bank_code?: string;
-    branch_code?: string;
-    amount?: number | null;
-    currency?: string;
-    message?: string;
-    payment_date?: string;
-    variable_symbol?: number | null;
-  }
 
   const validateBankInformation = (paymentData: PaymentData): boolean => {
     if (!paymentData.account_number || !paymentData.bank_code) {
@@ -71,18 +76,21 @@ export const SimpleLayout: React.FC = () => {
   const buildIban = (paymentData: PaymentData) => {
     return new IBANBuilder()
       .countryCode(CountryCode.CZ)
-      .bankCode(paymentData.bank_code)
-      .accountNumber(paymentData.account_number)
-      .branchCode(paymentData.branch_code)
+      .bankCode(paymentData.bank_code ?? '')
+      .accountNumber(paymentData.account_number ?? '')
+      .branchCode(paymentData.branch_code ?? '')
       .build();
   };
 
-  const buildSpaydAttributes = (paymentData: PaymentData, ibanString: string) => {
-    const spaydAttributes: Record<string, unknown> = {
+  const buildSpaydAttributes = (
+    paymentData: PaymentData,
+    ibanString: string
+  ): SpaydPaymentAttributes => {
+    const spaydAttributes: SpaydPaymentAttributes = {
       acc: ibanString,
     };
 
-    if (paymentData.amount !== null) {
+    if (paymentData.amount !== null && paymentData.amount !== undefined) {
       spaydAttributes.am = paymentData.amount.toFixed(2);
     }
 
@@ -98,7 +106,7 @@ export const SimpleLayout: React.FC = () => {
       spaydAttributes.dt = new Date(paymentData.payment_date);
     }
 
-    if (paymentData.variable_symbol !== null) {
+    if (paymentData.variable_symbol !== null && paymentData.variable_symbol !== undefined) {
       spaydAttributes.x = {
         vs: paymentData.variable_symbol.toString(),
       };
@@ -112,7 +120,7 @@ export const SimpleLayout: React.FC = () => {
       return;
     }
 
-    const { account, branch } = processAccountNumber(paymentData.account_number);
+    const { account, branch } = processAccountNumber(paymentData.account_number ?? '');
     paymentData.account_number = account;
     paymentData.branch_code = branch;
 
@@ -135,19 +143,6 @@ export const SimpleLayout: React.FC = () => {
       setErrorMessage(`Error generating payment information: ${errorMsg}`);
     }
   };
-
-  interface GeminiResponse {
-    error?: string;
-    paymentData?: PaymentData;
-  }
-
-  interface GeminiService {
-    validateResponse: (
-      text: string,
-      response: GeminiResponse,
-      model: GeminiModel
-    ) => Promise<{ status: boolean; message: string }>;
-  }
 
   const handleApiResponse = async (
     response: GeminiResponse,
