@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { FAQAccordion } from '../FAQAccordion';
+import { faqData } from '../../utils/faqDef.ts';
 
 describe('FAQAccordion Component', () => {
   it('renders the FAQ section title', () => {
@@ -9,23 +10,10 @@ describe('FAQAccordion Component', () => {
     expect(screen.getByText('Frequently Asked Questions')).toBeInTheDocument();
   });
 
-  it('renders all FAQ items', () => {
-    render(<FAQAccordion />);
-
-    expect(screen.getByText('What is a QR Code Payment Generator?')).toBeInTheDocument();
-    expect(screen.getByText(/What information do I need/)).toBeInTheDocument();
-    expect(screen.getByText('Why do I need a Gemini API key?')).toBeInTheDocument();
-    expect(screen.getByText('Where can I get Gemini API?')).toBeInTheDocument();
-    expect(screen.getByText('How much does it cost?')).toBeInTheDocument();
-    expect(screen.getByText('Is my payment information secure?')).toBeInTheDocument();
-    expect(screen.getByText('What payment formats are supported?')).toBeInTheDocument();
-  });
-
   it('renders with Bootstrap Accordion structure', () => {
     const { container } = render(<FAQAccordion />);
-
     expect(container.querySelector('.accordion')).toBeInTheDocument();
-    expect(container.querySelectorAll('.accordion-item').length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('.accordion-item').length).toEqual(faqData.length);
   });
 
   it('first accordion item is open by default', () => {

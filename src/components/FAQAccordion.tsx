@@ -1,11 +1,7 @@
 import React from 'react';
 import { Accordion } from 'react-bootstrap';
 import './FAQAccordion.css';
-
-interface FAQItem {
-  question: string;
-  answer: string;
-}
+import { faqData } from '../utils/faqDef.ts';
 
 const renderAnswerWithLinks = (text: string): React.ReactNode => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -22,57 +18,6 @@ const renderAnswerWithLinks = (text: string): React.ReactNode => {
     return part;
   });
 };
-
-const faqData: FAQItem[] = [
-  {
-    question: 'What is a QR Code Payment Generator?',
-    answer:
-      'A QR Code Payment Generator creates scannable QR codes containing payment information in the SPAYD format (Short Payment Descriptor). Recipients can scan these codes with their banking app to automatically fill in payment details.',
-  },
-  {
-    question: 'Why is this better than ChatGPT?',
-    answer:
-      'Running a prompt directly in ChatGPT was my initial idea how I though I can solve the process. After few tries I found out that the format of QRCode information needs to have some transformations, that were not so easy to express to ChatGPT so it would do it correctly all the time. That is why I decided for this small project.',
-  },
-  {
-    question: 'What information do I need to generate a payment QR code?',
-    answer:
-      "You need basic payment details including the recipient's account number, bank code, amount (optional), currency, and optionally a payment message or variable symbol. Just describe the payment in natural language and the AI will extract the relevant information.",
-  },
-  {
-    question: 'Why do I need a Gemini API key?',
-    answer:
-      "The Gemini API key allows the application to use Google's AI to intelligently parse your payment description and extract structured payment information. You can obtain a free API key from Google AI Studio.",
-  },
-  {
-    question: 'Where can I get Gemini API?',
-    answer: 'You can create new API key at https://aistudio.google.com/api-keys .',
-  },
-  {
-    question: 'How much does it cost?',
-    answer:
-      'It mostly depends on your usage. For vast majority of users, Free limit of Gemini is more than enough. For more details, visit https://ai.google.dev/gemini-api/docs/pricing .',
-  },
-  {
-    question: 'Is my payment information secure?',
-    answer:
-      "Yes! Your API key and payment information are processed locally in your browser and sent directly to Google's Gemini API. No payment data is stored on our servers. The API key is only kept in your browser's memory during the session.",
-  },
-  {
-    question: 'How can I trust the site?',
-    answer:
-      'Never trust anyone on the internet only because they say so. I built this project mostly for myself and make it open source for others to use. You can always inspect whole code hosted on https://github.com/kosinal/qr-pay-code . If you are still in doubt, you can generate separate Gemini API a remove it just after usage.',
-  },
-  {
-    question: 'What payment formats are supported?',
-    answer:
-      'The generator supports Czech banking standards (IBAN format) and creates SPAYD-compatible QR codes. These codes work with most Czech banking applications that support QR code payments.',
-  },
-  {
-    question: 'Can I use this for international payments?',
-    answer: 'Currently no, the application is optimized for Czech banking (CZ IBAN format).',
-  },
-];
 
 export const FAQAccordion: React.FC = () => {
   return (
