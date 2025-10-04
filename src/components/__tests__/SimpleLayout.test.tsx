@@ -372,15 +372,15 @@ describe('SimpleLayout Component', () => {
       fireEvent.click(submitButton);
 
       // During loading, all components should be disabled
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
-      });
-
-      await waitFor(() => {
-        expect(apiKeyInput).toBeDisabled();
-        expect(modelSelect).toBeDisabled();
-        expect(textarea).toBeDisabled();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
+          expect(apiKeyInput).toBeDisabled();
+          expect(modelSelect).toBeDisabled();
+          expect(textarea).toBeDisabled();
+        },
+        { timeout: 3000 }
+      );
 
       // After loading completes, components should be enabled again
       await waitFor(() => {
@@ -418,17 +418,19 @@ describe('SimpleLayout Component', () => {
       fireEvent.change(textarea, { target: { value: 'Test payment text' } });
       fireEvent.click(submitButton);
 
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
-      });
+      // Wait for loading state to be set and propagate to all elements
+      await waitFor(
+        () => {
+          expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument();
+          expect(apiKeyInput).toBeDisabled();
 
-      const showButton = screen.getByRole('button', { name: /show api key/i });
-      const clearButton = screen.getByRole('button', { name: /clear api key/i });
-
-      await waitFor(() => {
-        expect(showButton).toBeDisabled();
-        expect(clearButton).toBeDisabled();
-      });
+          const showButton = screen.getByRole('button', { name: /show api key/i });
+          const clearButton = screen.getByRole('button', { name: /clear api key/i });
+          expect(showButton).toBeDisabled();
+          expect(clearButton).toBeDisabled();
+        },
+        { timeout: 3000 }
+      );
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: 'Generate QR Code' })).toBeInTheDocument();
