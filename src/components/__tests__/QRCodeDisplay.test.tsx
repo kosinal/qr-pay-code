@@ -118,6 +118,25 @@ describe('QRCodeDisplay Component', () => {
     expect(qrCode).toHaveAttribute('aria-label', spaydString);
   });
 
+  it('renders QR code with specific_symbol in SPAYD string', () => {
+    const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890*AM:800.00*CC:CZK*X-SS:9876';
+    render(<QRCodeDisplay spaydString={spaydString} />);
+
+    const qrCode = screen.getByTestId('qr-code');
+    expect(qrCode).toBeInTheDocument();
+    expect(qrCode).toHaveAttribute('aria-label', spaydString);
+  });
+
+  it('renders QR code with all three symbols (vs, ks, ss) in SPAYD string', () => {
+    const spaydString =
+      'SPD*1.0*ACC:CZ0708000000001234567890*AM:2000.00*CC:CZK*X-VS:12345*X-KS:3558*X-SS:9876';
+    render(<QRCodeDisplay spaydString={spaydString} />);
+
+    const qrCode = screen.getByTestId('qr-code');
+    expect(qrCode).toBeInTheDocument();
+    expect(qrCode).toHaveAttribute('aria-label', spaydString);
+  });
+
   it('renders QR code without constant_symbol when not provided', () => {
     const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890*AM:750.00*CC:CZK';
     render(<QRCodeDisplay spaydString={spaydString} />);

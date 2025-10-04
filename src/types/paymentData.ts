@@ -8,4 +8,5 @@ export interface PaymentData {
   message: string | null;
   variable_symbol: number | null;
   constant_symbol: number | null;
+  specific_symbol: number | null;
 }

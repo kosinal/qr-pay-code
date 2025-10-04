@@ -29,7 +29,8 @@ const OUTPUT_FIELD_PROMPT_DEFINITION = `\`\`\`json
         "payment_date": null,
         "message": null,
         "variable_symbol": null,
-        "constant_symbol": null
+        "constant_symbol": null,
+        "specific_symbol": null
     }
     \`\`\``;
 
@@ -46,6 +47,7 @@ const PROMPT_TEMPLATE = `You are an expert in reading banking information and co
     *   \`message\`: String (see rule below)
     *   \`variable_symbol\`: Number (integer)
     *   \`constant_symbol\`: Number (integer)
+    *   \`specific_symbol\`: Number (integer)
 
 2.  **Missing Information:** If any required information is missing, use \`null\` as the value for that field.
 
@@ -113,7 +115,7 @@ Important Considerations for Czech-specific Payment Data:
 
 Account Number and Bank Code: These are often presented together (e.g., "129304573/0100"). Ensure both components are correctly extracted and separated into their respective fields.
 
-Symbols: Fields variabilní symbol (variable symbol) and konstantní symbol (constant symbol) are critical and must be extracted if present.
+Symbols: Fields variabilní symbol (variable symbol), konstantní symbol (constant symbol), and specifický symbol (specific symbol) are critical and must be extracted if present.
 
 Currency: Ensure the currency (e.g., "Kč" for CZK) is correctly identified and mapped to the "currency" field.
 
