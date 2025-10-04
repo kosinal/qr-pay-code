@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import cspPlugin from 'vite-plugin-csp'
 import packageJson from './package.json'
 
 // https://vite.dev/config/
@@ -8,6 +9,37 @@ export default defineConfig({
   base: '/qr-pay-code/',
   plugins: [
     react(),
+    cspPlugin({
+      policy: {
+        'default-src': ["'self'"],
+        'script-src': ["'self'"],
+        'style-src': [
+          "'self'",
+          "'unsafe-inline'",
+          'https://fonts.googleapis.com'
+        ],
+        'font-src': [
+          "'self'",
+          'https://fonts.gstatic.com'
+        ],
+        'img-src': [
+          "'self'",
+          'data:', // Required for QR codes (base64 images)
+          'blob:'
+        ],
+        'connect-src': [
+          "'self'",
+          'https://generativelanguage.googleapis.com' // Gemini API
+        ],
+        'worker-src': ["'self'", 'blob:'], // PWA service worker
+        'manifest-src': ["'self'"],
+        'base-uri': ["'self'"],
+        'form-action': ["'self'"],
+        'frame-ancestors': ["'none'"], // Prevents clickjacking
+        'object-src': ["'none'"],
+        'upgrade-insecure-requests': []
+      } as any
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'favicon-16x16.png', 'favicon-32x32.png', 'back.jpg'],
