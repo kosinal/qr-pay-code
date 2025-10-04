@@ -1,8 +1,25 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QRCodeDisplay } from '../QRCodeDisplay';
+import * as useIsMobileModule from '../../hooks/useIsMobile';
+import * as useQRCodeShareModule from '../../hooks/useQRCodeShare';
+
+vi.mock('../../hooks/useIsMobile');
+vi.mock('../../hooks/useQRCodeShare');
 
 describe('QRCodeDisplay Component', () => {
+  beforeEach(() => {
+    // Default mock implementations
+    vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(false);
+    vi.spyOn(useQRCodeShareModule, 'useQRCodeShare').mockReturnValue({
+      state: { isSharing: false, error: null, lastResult: null },
+      canShare: true,
+      shareQRCode: vi.fn(),
+      clearError: vi.fn(),
+      reset: vi.fn(),
+    });
+  });
+
   it('renders nothing when spaydString is null', () => {
     const { container } = render(<QRCodeDisplay spaydString={null} />);
     expect(container.firstChild).toBeNull();
@@ -109,5 +126,127 @@ describe('QRCodeDisplay Component', () => {
     expect(qrCode).toBeInTheDocument();
     expect(qrCode).toHaveAttribute('aria-label', spaydString);
     expect(qrCode.getAttribute('aria-label')).not.toContain('X-KS');
+  });
+
+  describe('Mobile Share Functionality', () => {
+    it('does not show share button on desktop', () => {
+      vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(false);
+
+      const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
+      render(<QRCodeDisplay spaydString={spaydString} />);
+
+      const shareButton = screen.queryByTestId('qr-share-button');
+      expect(shareButton).not.toBeInTheDocument();
+    });
+
+    it('shows share button on mobile when Web Share is supported', () => {
+      vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(true);
+      vi.spyOn(useQRCodeShareModule, 'useQRCodeShare').mockReturnValue({
+        state: { isSharing: false, error: null, lastResult: null },
+        canShare: true,
+        shareQRCode: vi.fn(),
+        clearError: vi.fn(),
+        reset: vi.fn(),
+      });
+
+      const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
+      render(<QRCodeDisplay spaydString={spaydString} />);
+
+      const shareButton = screen.getByTestId('qr-share-button');
+      expect(shareButton).toBeInTheDocument();
+      expect(shareButton).toHaveTextContent('Share to Banking App');
+    });
+
+    it('shows download button on mobile when Web Share is not supported', () => {
+      vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(true);
+      vi.spyOn(useQRCodeShareModule, 'useQRCodeShare').mockReturnValue({
+        state: { isSharing: false, error: null, lastResult: null },
+        canShare: false,
+        shareQRCode: vi.fn(),
+        clearError: vi.fn(),
+        reset: vi.fn(),
+      });
+
+      const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
+      render(<QRCodeDisplay spaydString={spaydString} />);
+
+      const shareButton = screen.getByTestId('qr-share-button');
+      expect(shareButton).toHaveTextContent('Download QR Code');
+    });
+
+    it('disables button and shows processing state while sharing', () => {
+      vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(true);
+      vi.spyOn(useQRCodeShareModule, 'useQRCodeShare').mockReturnValue({
+        state: { isSharing: true, error: null, lastResult: null },
+        canShare: true,
+        shareQRCode: vi.fn(),
+        clearError: vi.fn(),
+        reset: vi.fn(),
+      });
+
+      const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
+      render(<QRCodeDisplay spaydString={spaydString} />);
+
+      const shareButton = screen.getByTestId('qr-share-button');
+      expect(shareButton).toBeDisabled();
+      expect(shareButton).toHaveTextContent('Processing...');
+    });
+
+    it('calls shareQRCode with SVG element when button is clicked', async () => {
+      const mockShareQRCode = vi.fn();
+      vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(true);
+      vi.spyOn(useQRCodeShareModule, 'useQRCodeShare').mockReturnValue({
+        state: { isSharing: false, error: null, lastResult: null },
+        canShare: true,
+        shareQRCode: mockShareQRCode,
+        clearError: vi.fn(),
+        reset: vi.fn(),
+      });
+
+      const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
+      render(<QRCodeDisplay spaydString={spaydString} />);
+
+      const shareButton = screen.getByTestId('qr-share-button');
+      shareButton.click();
+
+      expect(mockShareQRCode).toHaveBeenCalled();
+      const svgArg = mockShareQRCode.mock.calls[0][0];
+      expect(svgArg).toBeInstanceOf(SVGElement);
+      expect(svgArg.tagName).toBe('svg');
+    });
+
+    it('shows error message when sharing fails', () => {
+      const errorMessage = 'Failed to share QR code';
+      vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(true);
+      vi.spyOn(useQRCodeShareModule, 'useQRCodeShare').mockReturnValue({
+        state: { isSharing: false, error: errorMessage, lastResult: null },
+        canShare: true,
+        shareQRCode: vi.fn(),
+        clearError: vi.fn(),
+        reset: vi.fn(),
+      });
+
+      const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
+      render(<QRCodeDisplay spaydString={spaydString} />);
+
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    });
+
+    it('does not show success/error messages when lastResult is cancelled', () => {
+      vi.spyOn(useIsMobileModule, 'useIsMobile').mockReturnValue(true);
+      vi.spyOn(useQRCodeShareModule, 'useQRCodeShare').mockReturnValue({
+        state: { isSharing: false, error: null, lastResult: 'cancelled' },
+        canShare: true,
+        shareQRCode: vi.fn(),
+        clearError: vi.fn(),
+        reset: vi.fn(),
+      });
+
+      const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
+      render(<QRCodeDisplay spaydString={spaydString} />);
+
+      expect(screen.queryByText(/shared successfully/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/downloaded/i)).not.toBeInTheDocument();
+    });
   });
 });

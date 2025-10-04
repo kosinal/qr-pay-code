@@ -34,10 +34,18 @@ export default [
         HTMLInputElement: 'readonly',
         HTMLSelectElement: 'readonly',
         HTMLTextAreaElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLCanvasElement: 'readonly',
         Storage: 'readonly',
         setTimeout: 'readonly',
         File: 'readonly',
         FileReader: 'readonly',
+        Blob: 'readonly',
+        Image: 'readonly',
+        URL: 'readonly',
+        XMLSerializer: 'readonly',
+        SVGElement: 'readonly',
+        SVGSVGElement: 'readonly',
       },
     },
     plugins: {
@@ -91,7 +99,7 @@ export default [
     },
   },
   {
-    files: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
+    files: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}', '**/test/**/*.ts'],
     languageOptions: {
       globals: {
         describe: 'readonly',
@@ -99,10 +107,15 @@ export default [
         expect: 'readonly',
         beforeEach: 'readonly',
         afterEach: 'readonly',
+        beforeAll: 'readonly',
         vi: 'readonly',
         test: 'readonly',
         Event: 'readonly',
         global: 'readonly',
+        GlobalEventHandlers: 'readonly',
+        ErrorEvent: 'readonly',
+        CanvasRenderingContext2D: 'readonly',
+        BlobCallback: 'readonly',
       },
     },
     rules: {
