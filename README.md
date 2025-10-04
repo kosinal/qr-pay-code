@@ -158,25 +158,38 @@ Aurora pojišťovna a.s.
 ```
 qr-pay-code/
 ├── public/                 # Static assets
+│   ├── favicon icons       # Various favicon sizes
+│   ├── back.jpg            # Background image
+│   ├── robots.txt          # Search engine directives
+│   └── 404.html            # GitHub Pages 404 handler
 ├── src/
 │   ├── components/         # React components
 │   │   ├── __tests__/      # Component tests
 │   │   ├── ApiKeyInput.tsx
+│   │   ├── Copyright.tsx
 │   │   ├── FAQAccordion.tsx
 │   │   ├── ImageInput.tsx
 │   │   ├── LoadingOverlay.tsx
 │   │   ├── ModelSelect.tsx
 │   │   ├── PaymentTextInput.tsx
 │   │   ├── QRCodeDisplay.tsx
-│   │   └── SimpleLayout.tsx
+│   │   ├── SimpleLayout.tsx
+│   │   └── *.css           # Component styles
+│   ├── hooks/              # Custom React hooks
+│   │   ├── __tests__/      # Hook tests
+│   │   └── useIsMobile.ts
 │   ├── types/              # TypeScript type definitions
 │   │   └── paymentData.ts
 │   ├── utils/              # Utility functions
 │   │   ├── __tests__/      # Utility tests
 │   │   ├── geminiService.ts
 │   │   └── localStorage.ts
+│   ├── test/               # Test configuration
+│   │   └── setup.ts        # Vitest setup
 │   ├── App.tsx             # Main app component
-│   └── main.tsx            # Application entry point
+│   ├── main.tsx            # Application entry point
+│   ├── index.css           # Global styles
+│   └── theme.css           # Theme variables
 ├── index.html              # HTML template
 ├── package.json            # Project dependencies
 ├── tsconfig.json           # TypeScript configuration
