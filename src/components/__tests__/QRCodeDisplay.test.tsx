@@ -35,7 +35,9 @@ describe('QRCodeDisplay Component', () => {
     render(<QRCodeDisplay spaydString={spaydString} />);
 
     expect(screen.getByText('Payment QR Code')).toBeInTheDocument();
-    expect(screen.getByText('Scan this QR code to make the payment')).toBeInTheDocument();
+    expect(
+      screen.getByText('Always double check the payment. No LLM/AI is 100% correct!')
+    ).toBeInTheDocument();
   });
 
   it('renders QR code SVG element', () => {
@@ -95,7 +97,9 @@ describe('QRCodeDisplay Component', () => {
     const title = screen.getByText('Payment QR Code');
     expect(title).toBeInTheDocument();
 
-    const description = screen.getByText('Scan this QR code to make the payment');
+    const description = screen.getByText(
+      'Always double check the payment. No LLM/AI is 100% correct!'
+    );
     expect(description).toBeInTheDocument();
   });
 

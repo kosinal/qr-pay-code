@@ -40,7 +40,9 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, class
             aria-label={spaydString}
           />
         </div>
-        <Card.Text className="text-muted small">Scan this QR code to make the payment</Card.Text>
+        <Card.Text id="qr-warning-text" className="text-qr-code small">
+          Always double check the payment. No LLM/AI is 100% correct!
+        </Card.Text>
       </Card.Body>
       {isMobile && (
         <Card.Body className="text-center">

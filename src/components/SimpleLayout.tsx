@@ -17,6 +17,7 @@ import { createShortPaymentDescriptor } from '@spayd/core';
 import './SimpleLayout.css';
 import './ApiKeyInput.css';
 import './PaymentTextInput.css';
+import './QRCodeDisplay.css';
 import { FAQAccordion } from './FAQAccordion.tsx';
 import type { PaymentData } from '../types/paymentData';
 
@@ -301,6 +302,16 @@ export const SimpleLayout: React.FC = () => {
             disabled={loadingState !== null}
             className="mb-4"
           />
+          <div className="d-flex justify-content-end mt-3">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={handleSubmit}
+              disabled={loadingState !== null}
+            >
+              {loadingState !== null ? 'Processing...' : 'Generate QR Code'}
+            </Button>
+          </div>
           <ApiKeyInput
             placeholder="Enter your Gemini API key"
             onApiKeyChange={(key) => setApiKey(key)}
@@ -314,16 +325,6 @@ export const SimpleLayout: React.FC = () => {
             className="mb-4"
             disabled={loadingState !== null}
           />
-          <div className="d-flex justify-content-end mt-3">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleSubmit}
-              disabled={loadingState !== null}
-            >
-              {loadingState !== null ? 'Processing...' : 'Generate QR Code'}
-            </Button>
-          </div>
         </Card.Body>
         <FAQAccordion />
       </Card>
