@@ -30,6 +30,11 @@ const faqData: FAQItem[] = [
       'A QR Code Payment Generator creates scannable QR codes containing payment information in the SPAYD format (Short Payment Descriptor). Recipients can scan these codes with their banking app to automatically fill in payment details.',
   },
   {
+    question: 'Why is this better than ChatGPT?',
+    answer:
+      'Running a prompt directly in ChatGPT was my initial idea how I though I can solve the process. After few tries I found out that the format of QRCode information needs to have some transformations, that were not so easy to express to ChatGPT so it would do it correctly all the time. That is why I decided for this small project.',
+  },
+  {
     question: 'What information do I need to generate a payment QR code?',
     answer:
       "You need basic payment details including the recipient's account number, bank code, amount (optional), currency, and optionally a payment message or variable symbol. Just describe the payment in natural language and the AI will extract the relevant information.",
@@ -52,6 +57,11 @@ const faqData: FAQItem[] = [
     question: 'Is my payment information secure?',
     answer:
       "Yes! Your API key and payment information are processed locally in your browser and sent directly to Google's Gemini API. No payment data is stored on our servers. The API key is only kept in your browser's memory during the session.",
+  },
+  {
+    question: 'How can I trust the site?',
+    answer:
+      'Never trust anyone on the internet only because they say so. I built this project mostly for myself and make it open source for others to use. You can always inspect whole code hosted on https://github.com/kosinal/qr-pay-code . If you are still in doubt, you can generate separate Gemini API a remove it just after usage.',
   },
   {
     question: 'What payment formats are supported?',
