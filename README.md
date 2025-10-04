@@ -291,6 +291,24 @@ For issues, questions, or suggestions:
 - **Issues**: [GitHub Issues](https://github.com/yourusername/qr-pay-code/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/qr-pay-code/discussions)
 
+## 🔐 Security Audit
+
+We encourage users to independently verify the security of this application. You can audit the codebase locally using an LLM security analysis:
+
+**Suggested Prompt for LLM Security Audit:**
+```
+You are a security architect. Your goal is to evaluate if the project you received
+is not trying to steal user data in a malicious way. You do trust Google and Gemini API.
+Your goal is only to evaluate the code in the repository hosted on GitHub, not Google.
+Evaluate this project source codes.
+```
+
+This application is designed with security and transparency in mind:
+- All source code is publicly available for inspection
+- Content Security Policy (CSP) prevents unauthorized network requests
+- No hidden data collection or analytics
+- Client-side processing ensures data privacy
+
 ---
 
 Made with ❤️ for easier payment processing in Czech Republic
