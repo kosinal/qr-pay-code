@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Copyright Component > matches snapshot 1`] = `
+<div
+  class="copyright"
+>
+  © 
+  2025
+   Lukas Kosina · v
+  1.0.1
+</div>
+`;
