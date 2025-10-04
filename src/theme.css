@@ -213,3 +213,10 @@ svg {
   padding: 20px;
   border-radius: 8px;
 }
+
+/* Responsive QR code padding for mobile */
+@media (max-width: 576px) {
+  .qr-code-container {
+    padding: 8px;
+  }
+}

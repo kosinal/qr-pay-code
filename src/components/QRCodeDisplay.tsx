@@ -16,7 +16,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, class
     <Card className={`qr-code-display ${className}`}>
       <Card.Body className="text-center">
         <Card.Title>Payment QR Code</Card.Title>
-        <div className="qr-code-container" style={{ padding: '20px' }}>
+        <div className="qr-code-container">
           <QRCodeSVG
             value={spaydString}
             size={256}
