@@ -21,11 +21,8 @@ describe('Copyright Component', () => {
   });
 
   it('displays correct format with all elements', () => {
-    const currentYear = new Date().getFullYear();
     render(<Copyright />);
-    expect(
-      screen.getByText(`© ${currentYear} Lukas Kosina · v${packageJson.version}`)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/© .* Lukas Kosina · v/)).toBeInTheDocument();
   });
 
   it('applies copyright className', () => {
@@ -62,6 +59,23 @@ describe('Copyright Component', () => {
     render(<Copyright />);
     const text = screen.getByText(/v\d+\.\d+\.\d+/);
     expect(text).toBeInTheDocument();
+  });
+
+  it('contains license link', () => {
+    render(<Copyright />);
+    const licenseLink = screen.getByRole('link', { name: /license/i });
+    expect(licenseLink).toBeInTheDocument();
+    expect(licenseLink).toHaveAttribute(
+      'href',
+      'https://github.com/kosinal/qr-pay-code/blob/master/LICENSE'
+    );
+  });
+
+  it('license link opens in new tab', () => {
+    render(<Copyright />);
+    const licenseLink = screen.getByRole('link', { name: /license/i });
+    expect(licenseLink).toHaveAttribute('target', '_blank');
+    expect(licenseLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('matches snapshot', () => {

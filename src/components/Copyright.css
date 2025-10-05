@@ -11,3 +11,12 @@
 .copyright:hover {
   opacity: 1;
 }
+
+.copyright a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.copyright a:hover {
+  text-decoration: underline;
+}
