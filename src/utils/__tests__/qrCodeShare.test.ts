@@ -354,4 +354,88 @@ describe('qrCodeShare utilities', () => {
       expect(clickSpy).toHaveBeenCalled();
     }, 10000);
   });
+
+  describe('Edge cases and error handling', () => {
+    let testSvgElement: SVGElement;
+
+    beforeEach(() => {
+      testSvgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      testSvgElement.setAttribute('viewBox', '0 0 100 100');
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('width', '100');
+      rect.setAttribute('height', '100');
+      rect.setAttribute('fill', 'red');
+      testSvgElement.appendChild(rect);
+    });
+
+    it('handles canvas context creation failure', async () => {
+      const originalGetContext = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue(null);
+
+      await expect(convertSvgToPngBlob(testSvgElement)).rejects.toThrow(
+        'Failed to get canvas context'
+      );
+
+      HTMLCanvasElement.prototype.getContext = originalGetContext;
+    }, 10000);
+
+    it('handles image load errors', async () => {
+      const originalImage = global.Image;
+
+      // Mock Image to trigger onerror
+      global.Image = class MockImage {
+        onload: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        src = '';
+
+        constructor() {
+          setTimeout(() => {
+            if (this.onerror) {
+              this.onerror();
+            }
+          }, 0);
+        }
+      } as any;
+
+      try {
+        await expect(convertSvgToPngBlob(testSvgElement)).rejects.toThrow(
+          'Failed to load SVG image'
+        );
+      } finally {
+        global.Image = originalImage;
+      }
+    }, 10000);
+
+    it('handles canvas.toBlob returning null', async () => {
+      const originalToBlob = HTMLCanvasElement.prototype.toBlob;
+
+      try {
+        HTMLCanvasElement.prototype.toBlob = vi.fn().mockImplementation(function (callback) {
+          callback(null);
+        });
+
+        await expect(convertSvgToPngBlob(testSvgElement)).rejects.toThrow(
+          'Failed to convert canvas to blob'
+        );
+      } finally {
+        HTMLCanvasElement.prototype.toBlob = originalToBlob;
+      }
+    }, 10000);
+
+    it('handles errors during image drawing', async () => {
+      if (typeof CanvasRenderingContext2D === 'undefined') {
+        // Skip this test in environments without CanvasRenderingContext2D
+        return;
+      }
+
+      const originalDrawImage = CanvasRenderingContext2D.prototype.drawImage;
+      CanvasRenderingContext2D.prototype.drawImage = vi.fn().mockImplementation(() => {
+        throw new Error('Drawing failed');
+      });
+
+      await expect(convertSvgToPngBlob(testSvgElement)).rejects.toThrow('Drawing failed');
+
+      CanvasRenderingContext2D.prototype.drawImage = originalDrawImage;
+    }, 10000);
+  });
 });

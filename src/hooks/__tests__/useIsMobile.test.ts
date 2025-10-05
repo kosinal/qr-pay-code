@@ -265,4 +265,49 @@ describe('useIsMobile Hook', () => {
       removeEventListenerSpy.mockRestore();
     });
   });
+
+  describe('Edge Cases', () => {
+    it('handles missing navigator properties gracefully', () => {
+      const originalNavigator = global.navigator;
+
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent: undefined,
+          vendor: undefined,
+        },
+        configurable: true,
+        writable: true,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+
+      expect(typeof result.current).toBe('boolean');
+
+      Object.defineProperty(global, 'navigator', {
+        value: originalNavigator,
+        configurable: true,
+        writable: true,
+      });
+    });
+
+    it('handles window.opera fallback check', () => {
+      try {
+        // Extend window with opera property while keeping all methods
+        Object.defineProperty(global.window, 'opera', {
+          value: 'Opera/9.80',
+          configurable: true,
+          writable: true,
+        });
+
+        const { result } = renderHook(() => useIsMobile());
+
+        expect(typeof result.current).toBe('boolean');
+      } finally {
+        // Clean up
+        if ((global.window as any).opera !== undefined) {
+          delete (global.window as any).opera;
+        }
+      }
+    });
+  });
 });

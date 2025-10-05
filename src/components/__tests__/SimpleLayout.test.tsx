@@ -767,4 +767,158 @@ describe('SimpleLayout Component', () => {
       expect(qrCodeDisplay).toBeInTheDocument();
     });
   });
+
+  describe('Validation Warnings', () => {
+    it('displays validation warning when validation fails', async () => {
+      const mockService = createMockGeminiService({
+        text: JSON.stringify({
+          account_number: '123456789',
+          bank_code: '0100',
+          amount: 1000,
+          currency: 'CZK',
+        }),
+        paymentData: {
+          account_number: '123456789',
+          bank_code: '0100',
+          amount: 1000,
+          currency: 'CZK',
+        },
+      });
+
+      mockService.validateResponse = vi.fn().mockResolvedValue({
+        status: false,
+        message: 'Data validation failed',
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Validation Warning:/)).toBeInTheDocument();
+        expect(screen.getByText(/Data validation failed/)).toBeInTheDocument();
+      });
+    });
+
+    it('dismisses validation warning when close button is clicked', async () => {
+      const mockService = createMockGeminiService({
+        text: JSON.stringify({
+          account_number: '123456789',
+          bank_code: '0100',
+          amount: 1000,
+          currency: 'CZK',
+        }),
+        paymentData: {
+          account_number: '123456789',
+          bank_code: '0100',
+          amount: 1000,
+          currency: 'CZK',
+        },
+      });
+
+      mockService.validateResponse = vi.fn().mockResolvedValue({
+        status: false,
+        message: 'Data validation failed',
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Validation Warning:/)).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByRole('button', { name: 'Close alert' });
+      fireEvent.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Validation Warning:/)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Missing Bank Information Error', () => {
+    it('shows error when account_number is missing', async () => {
+      const mockService = createMockGeminiService({
+        text: JSON.stringify({
+          bank_code: '0100',
+          amount: 1000,
+          currency: 'CZK',
+        }),
+        paymentData: {
+          bank_code: '0100',
+          amount: 1000,
+          currency: 'CZK',
+        },
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Unable to find bank information \(account number or bank code\)/)
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('shows error when bank_code is missing', async () => {
+      const mockService = createMockGeminiService({
+        text: JSON.stringify({
+          account_number: '123456789',
+          amount: 1000,
+          currency: 'CZK',
+        }),
+        paymentData: {
+          account_number: '123456789',
+          amount: 1000,
+          currency: 'CZK',
+        },
+      });
+
+      vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
+
+      render(<SimpleLayout />);
+
+      const apiKeyInput = screen.getByLabelText('API Key');
+      const textarea = screen.getByRole('textbox');
+      const submitButton = screen.getByRole('button', { name: 'Generate QR Code' });
+
+      fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
+      fireEvent.change(textarea, { target: { value: 'Test payment text' } });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Unable to find bank information \(account number or bank code\)/)
+        ).toBeInTheDocument();
+      });
+    });
+  });
 });
