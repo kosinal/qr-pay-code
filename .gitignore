@@ -28,3 +28,5 @@ CLAUDE.md
 components.txt
 dev-dist
 coverage
+
+*.afphoto
