@@ -4,6 +4,7 @@ import { Card, Button, Alert } from 'react-bootstrap';
 import { BsShare, BsDownload } from 'react-icons/bs';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useQRCodeShare } from '../hooks/useQRCodeShare';
+import { useQRCodeSize } from '../hooks/useQRCodeSize';
 
 interface QRCodeDisplayProps {
   spaydString: string | null;
@@ -14,6 +15,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, class
   const qrContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const { state, canShare, shareQRCode } = useQRCodeShare();
+  const qrSize = useQRCodeSize();
 
   if (!spaydString) {
     return null;
@@ -36,7 +38,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, class
         <div className="qr-code-container" ref={qrContainerRef}>
           <QRCodeSVG
             value={spaydString}
-            size={256}
+            size={qrSize}
             level="M"
             marginSize={4}
             data-testid="qr-code"
