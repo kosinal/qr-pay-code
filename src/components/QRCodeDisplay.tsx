@@ -29,7 +29,10 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, class
   return (
     <Card className={`qr-code-display ${className}`}>
       <Card.Body className="text-center">
-        <Card.Title>Payment QR Code</Card.Title>
+        <Card.Title className="text-qr-code">
+          <div>Always double check the payment.</div>
+          <div>No LLM/AI is 100% correct!</div>
+        </Card.Title>
         <div className="qr-code-container" ref={qrContainerRef}>
           <QRCodeSVG
             value={spaydString}
@@ -40,9 +43,6 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ spaydString, class
             aria-label={spaydString}
           />
         </div>
-        <Card.Text id="qr-warning-text" className="text-qr-code small">
-          Always double check the payment. No LLM/AI is 100% correct!
-        </Card.Text>
       </Card.Body>
       {isMobile && (
         <Card.Body className="text-center">

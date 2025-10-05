@@ -33,11 +33,8 @@ describe('QRCodeDisplay Component', () => {
   it('renders QR code when spaydString is provided', () => {
     const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890*AM:500.00*CC:CZK';
     render(<QRCodeDisplay spaydString={spaydString} />);
-
-    expect(screen.getByText('Payment QR Code')).toBeInTheDocument();
-    expect(
-      screen.getByText('Always double check the payment. No LLM/AI is 100% correct!')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Always double check the payment.')).toBeInTheDocument();
+    expect(screen.getByText('No LLM/AI is 100% correct!')).toBeInTheDocument();
   });
 
   it('renders QR code SVG element', () => {
@@ -88,19 +85,6 @@ describe('QRCodeDisplay Component', () => {
 
     qrCode = screen.getByTestId('qr-code');
     expect(qrCode).toBeInTheDocument();
-  });
-
-  it('has proper accessibility structure', () => {
-    const spaydString = 'SPD*1.0*ACC:CZ0708000000001234567890';
-    render(<QRCodeDisplay spaydString={spaydString} />);
-
-    const title = screen.getByText('Payment QR Code');
-    expect(title).toBeInTheDocument();
-
-    const description = screen.getByText(
-      'Always double check the payment. No LLM/AI is 100% correct!'
-    );
-    expect(description).toBeInTheDocument();
   });
 
   it('renders QR code with constant_symbol in SPAYD string', () => {

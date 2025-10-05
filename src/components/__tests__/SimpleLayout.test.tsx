@@ -728,10 +728,8 @@ describe('SimpleLayout Component', () => {
         expect(qrCode).toBeInTheDocument();
       });
 
-      expect(screen.getByText('Payment QR Code')).toBeInTheDocument();
-      expect(
-        screen.getByText('Always double check the payment. No LLM/AI is 100% correct!')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Always double check the payment.')).toBeInTheDocument();
+      expect(screen.getByText('No LLM/AI is 100% correct!')).toBeInTheDocument();
     });
 
     it('QR code component is rendered in layout', async () => {
@@ -767,7 +765,6 @@ describe('SimpleLayout Component', () => {
 
       const qrCodeDisplay = container.querySelector('.qr-code-display');
       expect(qrCodeDisplay).toBeInTheDocument();
-      expect(screen.getByText('Payment QR Code')).toBeInTheDocument();
     });
   });
 });

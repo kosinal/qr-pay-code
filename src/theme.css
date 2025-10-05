@@ -220,36 +220,3 @@ svg {
     padding: 8px;
   }
 }
-
-/* QR code share button styling */
-.qr-share-button {
-  min-width: 180px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.qr-share-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.qr-share-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.qr-share-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Alert styling within QR code display */
-.qr-code-display .alert {
-  font-size: 0.875rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-}
-
-.qr-code-display .alert small {
-  margin: 0;
-  display: block;
-}
