@@ -20,3 +20,15 @@
 .copyright a:hover {
   text-decoration: underline;
 }
+
+/* Mobile responsive layout */
+@media (max-width: 768px) {
+  .copyright {
+    position: static;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 0;
+    display: block;
+    width: 100%;
+  }
+}
