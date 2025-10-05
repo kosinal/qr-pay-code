@@ -1,3 +1,16 @@
+/* QR code container styling for proper centering */
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.qr-code-container svg {
+  display: block;
+  margin: 0 auto;
+}
+
 /* QR code share button styling */
 .qr-share-button {
   min-width: 180px;
