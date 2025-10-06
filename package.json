@@ -20,7 +20,7 @@
   "dependencies": {
     "@google/genai": "^1.21.0",
     "@spayd/core": "^0.0.3",
-    "@types/node": "^24.6.0",
+    "@types/node": "^24.7.0",
     "add": "^2.0.6",
     "bootstrap": "^5.3.3",
     "ibankit": "^1.6.5",
