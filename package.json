@@ -18,7 +18,7 @@
     "check": "npm run format:check && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
-    "@google/genai": "^1.21.0",
+    "@google/genai": "^1.22.0",
     "@spayd/core": "^0.0.3",
     "@types/node": "^24.7.0",
     "add": "^2.0.6",
