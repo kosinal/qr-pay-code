@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, Alert } from 'react-bootstrap';
+import { Card, Button, Alert, Form } from 'react-bootstrap';
 import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
@@ -45,6 +45,7 @@ export const SimpleLayout: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [validationWarning, setValidationWarning] = useState<string | null>(null);
   const [spaydString, setSpaydString] = useState<string | null>(null);
+  const [enableToT, setEnableToT] = useState(false);
 
   const parseApiError = (error: string): string => {
     try {
@@ -183,7 +184,12 @@ export const SimpleLayout: React.FC = () => {
       setLoadingState('validating');
 
       // Validate response for hallucinations
-      const validation = await geminiService.validateResponse(paymentText, response, selectedModel);
+      const validation = await geminiService.validateResponse(
+        paymentText,
+        response,
+        selectedModel,
+        enableToT
+      );
 
       if (!validation.status) {
         setValidationWarning(validation.message);
@@ -239,7 +245,7 @@ export const SimpleLayout: React.FC = () => {
 
     try {
       const geminiService = createGeminiService(apiKey);
-      const response = await geminiService.generateContent(paymentText, selectedModel);
+      const response = await geminiService.generateContent(paymentText, selectedModel, enableToT);
       await handleApiResponse(response, geminiService);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
@@ -296,6 +302,15 @@ export const SimpleLayout: React.FC = () => {
             isInvalid={showValidation && !paymentText}
             disabled={loadingState !== null}
             className="mb-4"
+          />
+          <Form.Check
+            type="checkbox"
+            id="enable-tot-checkbox"
+            label="Deep analyze"
+            checked={enableToT}
+            onChange={(e) => setEnableToT(e.target.checked)}
+            disabled={loadingState !== null}
+            className="mb-3"
           />
           <ImageInput
             onImageSelect={handleImageSelect}
