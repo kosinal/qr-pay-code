@@ -3,7 +3,7 @@ name: Format and Lint
 on:
   push:
     branches:
-      - master
+      - develop
   workflow_dispatch: # Allow manual trigger
 
 permissions:
