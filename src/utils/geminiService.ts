@@ -18,6 +18,20 @@ export interface OCRResponse {
 }
 
 // ============================================================================
+// TREE OF THOUGHTS PREFIX - Enables multi-expert collaborative reasoning
+// ============================================================================
+const TOT_PREFIX = `Imagine three different experts are answering this question.
+All experts will write down 1 step of their thinking, then share it with the group.
+Then all experts will go on to the next step, etc.
+If any expert realizes they're wrong at any point then they leave.
+
+All experts must discuss their finding in <discussion></discussion> blocks.
+The result must be enclosed in "\`\`\`json" "\`\`\`" tags!
+
+`;
+// ============================================================================
+
+// ============================================================================
 // PROMPT TEMPLATE - Edit this to customize the prompt sent to Gemini
 // ============================================================================
 const OUTPUT_FIELD_PROMPT_DEFINITION = `\`\`\`json
@@ -290,34 +304,48 @@ export class GeminiService {
     return sanitized;
   }
 
+  /**
+   * Parses JSON response from LLM output
+   * Handles extraction from markdown code blocks (```json or ```)
+   * @param text Raw text response from LLM
+   * @returns Parsed JSON object of type T
+   * @throws Error if JSON parsing fails
+   */
+  parseJsonFromLLMResponse<T>(text: string): T {
+    // Extract JSON from markdown code blocks if present
+    const jsonMatch =
+      text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
+    const jsonString = jsonMatch ? jsonMatch[1] : text;
+
+    return JSON.parse(jsonString.trim()) as T;
+  }
+
   async generateContent(
     userInput: string,
-    model: string = 'gemini-2.5-flash'
+    model: string = 'gemini-2.5-flash',
+    enableToT: boolean = false
   ): Promise<GeminiResponse> {
     try {
       // Sanitize user input to prevent XML tag injection
       const sanitizedInput = this.sanitizeUserInput(userInput);
 
+      // Apply ToT prefix if enabled
+      const promptTemplate = enableToT ? TOT_PREFIX + PROMPT_TEMPLATE : PROMPT_TEMPLATE;
+
       // Replace {user_input} placeholder with sanitized user input
-      const finalPrompt = PROMPT_TEMPLATE.replace('{user_input}', sanitizedInput);
+      const finalPrompt = promptTemplate.replace('{user_input}', sanitizedInput);
 
       const result = await this.genai.models.generateContent({
         model,
         contents: finalPrompt,
       });
-
       const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
       // Parse JSON response
       let paymentData: PaymentData | undefined;
       if (text) {
         try {
-          // Extract JSON from markdown code blocks if present
-          const jsonMatch =
-            text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
-          const jsonString = jsonMatch ? jsonMatch[1] : text;
-
-          paymentData = JSON.parse(jsonString.trim()) as PaymentData;
+          paymentData = this.parseJsonFromLLMResponse<PaymentData>(text);
         } catch (parseError) {
           console.warn('Failed to parse payment data from response:', parseError);
         }
@@ -335,7 +363,8 @@ export class GeminiService {
   async validateResponse(
     userPrompt: string,
     parsedResponse: GeminiResponse,
-    model: string = 'gemini-2.5-flash'
+    model: string = 'gemini-2.5-flash',
+    enableToT: boolean = false
   ): Promise<ValidationResponse> {
     try {
       // If there's no payment data to validate, return success
@@ -349,12 +378,16 @@ export class GeminiService {
       // Sanitize user input to prevent injection
       const sanitizedInput = this.sanitizeUserInput(userPrompt);
 
+      // Apply ToT prefix if enabled
+      const validationTemplate = enableToT
+        ? TOT_PREFIX + VALIDATION_PROMPT_TEMPLATE
+        : VALIDATION_PROMPT_TEMPLATE;
+
       // Create validation prompt with original input and extracted data
       const extractedDataJson = JSON.stringify(parsedResponse.paymentData, null, 2);
-      const validationPrompt = VALIDATION_PROMPT_TEMPLATE.replace(
-        '{original_input}',
-        sanitizedInput
-      ).replace('{extracted_data}', extractedDataJson);
+      const validationPrompt = validationTemplate
+        .replace('{original_input}', sanitizedInput)
+        .replace('{extracted_data}', extractedDataJson);
 
       const result = await this.genai.models.generateContent({
         model,
@@ -365,10 +398,7 @@ export class GeminiService {
 
       // Parse validation response
       try {
-        const jsonMatch =
-          text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
-        const jsonString = jsonMatch ? jsonMatch[1] : text;
-        return JSON.parse(jsonString.trim()) as ValidationResponse;
+        return this.parseJsonFromLLMResponse<ValidationResponse>(text);
       } catch (parseError) {
         console.warn('Failed to parse validation response:', parseError);
         return {
