@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Button, Alert, Form } from 'react-bootstrap';
+import { Card, Button, Alert, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { BsQuestionCircle } from 'react-icons/bs';
 import { PaymentTextInput } from './PaymentTextInput';
 import { ApiKeyInput } from './ApiKeyInput';
 import { ModelSelect, type GeminiModel } from './ModelSelect';
@@ -306,11 +307,28 @@ export const SimpleLayout: React.FC = () => {
           <Form.Check
             type="checkbox"
             id="enable-tot-checkbox"
-            label="Deep analyze"
             checked={enableToT}
             onChange={(e) => setEnableToT(e.target.checked)}
             disabled={loadingState !== null}
             className="mb-3"
+            label={
+              <>
+                Deep analyze{' '}
+                <OverlayTrigger
+                  placement="right"
+                  overlay={
+                    <Tooltip id="tot-tooltip">
+                      Uses Tree of Thought reasoning for deeper analysis. This will consume more
+                      tokens and take longer to complete.
+                    </Tooltip>
+                  }
+                >
+                  <span style={{ cursor: 'help', marginLeft: '4px' }}>
+                    <BsQuestionCircle size={16} />
+                  </span>
+                </OverlayTrigger>
+              </>
+            }
           />
           <ImageInput
             onImageSelect={handleImageSelect}
