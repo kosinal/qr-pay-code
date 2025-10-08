@@ -7,13 +7,44 @@ if (typeof Event === 'undefined') {
   global.Event = window.Event as typeof Event;
 }
 
+// Helper to mock matchMedia
+const mockMatchMedia = (matches: Record<string, boolean>) => {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    configurable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches: matches[query] ?? false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+};
+
 describe('useIsMobile Hook', () => {
   let originalUserAgent: string;
   let originalInnerWidth: number;
+  let originalMaxTouchPoints: number;
 
   beforeEach(() => {
     originalUserAgent = navigator.userAgent;
     originalInnerWidth = window.innerWidth;
+    originalMaxTouchPoints = navigator.maxTouchPoints;
+
+    // Default: no touch, fine pointer, has hover
+    Object.defineProperty(navigator, 'maxTouchPoints', {
+      value: 0,
+      writable: true,
+      configurable: true,
+    });
+    mockMatchMedia({
+      '(pointer: coarse)': false,
+      '(hover: none)': false,
+    });
   });
 
   afterEach(() => {
@@ -24,6 +55,11 @@ describe('useIsMobile Hook', () => {
     });
     Object.defineProperty(window, 'innerWidth', {
       value: originalInnerWidth,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(navigator, 'maxTouchPoints', {
+      value: originalMaxTouchPoints,
       writable: true,
       configurable: true,
     });
@@ -266,6 +302,212 @@ describe('useIsMobile Hook', () => {
     });
   });
 
+  describe('Touch Capability Detection', () => {
+    it('detects iPad Pro in desktop mode (touch + coarse pointer)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 5,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1024,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': true,
+        '(hover: none)': true,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      expect(result.current).toBe(true);
+    });
+
+    it('detects large Android tablet (touch + coarse pointer)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Linux; Android 12; SM-X906C) AppleWebKit/537.36',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 10,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1600,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': true,
+        '(hover: none)': true,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      expect(result.current).toBe(true);
+    });
+
+    it('excludes desktop with touchscreen (touch but fine pointer + hover)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/91.0',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 10,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1920,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': false,
+        '(hover: none)': false,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      expect(result.current).toBe(false);
+    });
+
+    it('detects Surface Pro in tablet mode (touch + coarse pointer + no hover)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/91.0',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 10,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1368,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': true,
+        '(hover: none)': true,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      expect(result.current).toBe(true);
+    });
+
+    it('detects iPad with mobile UA (touch + mobile UA)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 5,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1024,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': false,
+        '(hover: none)': false,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      expect(result.current).toBe(true);
+    });
+
+    it('detects standard mobile phone (touch + coarse + no hover + mobile UA)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 5,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 375,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': true,
+        '(hover: none)': true,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      expect(result.current).toBe(true);
+    });
+
+    it('handles device with touch but no other mobile indicators (fallback to width)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/91.0',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 5,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1920,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': false,
+        '(hover: none)': false,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      expect(result.current).toBe(false);
+    });
+  });
+
+  describe('Media Query Edge Cases', () => {
+    it('detects device with no touch but coarse pointer (rare but possible)', () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/91.0',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 0,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 500,
+        writable: true,
+        configurable: true,
+      });
+      mockMatchMedia({
+        '(pointer: coarse)': true,
+        '(hover: none)': false,
+      });
+
+      const { result } = renderHook(() => useIsMobile());
+      // Should fall back to width check
+      expect(result.current).toBe(true);
+    });
+  });
+
   describe('Edge Cases', () => {
     it('handles missing navigator properties gracefully', () => {
       const originalNavigator = global.navigator;
@@ -274,6 +516,7 @@ describe('useIsMobile Hook', () => {
         value: {
           userAgent: undefined,
           vendor: undefined,
+          maxTouchPoints: 0,
         },
         configurable: true,
         writable: true,
