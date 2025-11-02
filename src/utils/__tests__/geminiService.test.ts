@@ -5,7 +5,7 @@ import type { PaymentData } from '../../types/paymentData.ts';
 const mockGenerateContent = vi.fn().mockImplementation(() => ({}));
 
 vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(function() {
+  GoogleGenAI: vi.fn().mockImplementation(function () {
     return {
       models: {
         generateContent: mockGenerateContent,

@@ -1,4 +1,4 @@
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import { ApiKeyInput } from '../ApiKeyInput';
 
@@ -27,11 +27,13 @@ describe('ApiKeyInput Component', () => {
     expect(input.value).toBe('');
   });
 
-  it('loads API key from localStorage on mount', () => {
+  it('loads API key from localStorage on mount', async () => {
     const storedKey = 'test-api-key-123';
     localStorage.setItem('qr-pay-api-key', storedKey);
 
-    render(<ApiKeyInput />);
+    await act(async () => {
+      render(<ApiKeyInput />);
+    });
 
     const input = screen.getByLabelText('API Key') as HTMLInputElement;
     expect(input.value).toBe(storedKey);
@@ -79,14 +81,18 @@ describe('ApiKeyInput Component', () => {
     expect(toggleButton).toBeInTheDocument();
   });
 
-  it('clears API key and removes from localStorage', () => {
+  it('clears API key and removes from localStorage', async () => {
     const storedKey = 'stored-key-123';
     localStorage.setItem('qr-pay-api-key', storedKey);
 
-    render(<ApiKeyInput />);
+    await act(async () => {
+      render(<ApiKeyInput />);
+    });
 
     const clearButton = screen.getByRole('button', { name: /clear api key/i });
-    fireEvent.click(clearButton);
+    await act(async () => {
+      fireEvent.click(clearButton);
+    });
 
     const input = screen.getByLabelText('API Key') as HTMLInputElement;
     expect(input.value).toBe('');
@@ -170,9 +176,11 @@ describe('ApiKeyInput Component', () => {
     expect(toggleButton).toBeDisabled();
   });
 
-  it('disables clear button when disabled prop is true', () => {
+  it('disables clear button when disabled prop is true', async () => {
     localStorage.setItem('qr-pay-api-key', 'test-key');
-    render(<ApiKeyInput disabled={true} />);
+    await act(async () => {
+      render(<ApiKeyInput disabled={true} />);
+    });
 
     const clearButton = screen.getByRole('button', { name: /clear api key/i });
     expect(clearButton).toBeDisabled();
