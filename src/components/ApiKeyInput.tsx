@@ -26,8 +26,10 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
   useEffect(() => {
     const storedKey = localStorage.getItem(STORAGE_KEY);
     if (storedKey) {
-      setApiKey(storedKey);
-      onApiKeyChange?.(storedKey);
+      Promise.resolve().then(() => {
+        setApiKey(storedKey);
+        onApiKeyChange?.(storedKey);
+      });
     }
   }, [onApiKeyChange]);
 

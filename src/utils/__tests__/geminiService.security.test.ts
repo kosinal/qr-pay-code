@@ -2,22 +2,24 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GeminiService } from '../geminiService';
 
 // Mock the GoogleGenAI
+const mockGenerateContent = vi.fn().mockImplementation(() => ({}));
+
 vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: {
-      generateContent: vi.fn(),
-    },
-  })),
+  GoogleGenAI: vi.fn().mockImplementation(function() {
+    return {
+      models: {
+        generateContent: mockGenerateContent,
+      },
+    };
+  }),
 }));
 
 describe('GeminiService - Security Tests', () => {
   let service: GeminiService;
-  let mockGenerateContent: any;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     service = new GeminiService('test-api-key');
-    mockGenerateContent = vi.fn();
-    (service as any).genai.models.generateContent = mockGenerateContent;
   });
 
   describe('XML Tag Injection Prevention', () => {
