@@ -30,7 +30,30 @@ describe('qrCodeShare utilities', () => {
         },
       };
 
-      global.Image = vi.fn(() => mockImage) as unknown as typeof Image;
+      global.Image = class MockImage {
+        width: number = 0;
+        height: number = 0;
+        onload: ((this: GlobalEventHandlers, ev: Event) => void) | null = null;
+        onerror: ((this: GlobalEventHandlers, ev: ErrorEvent) => void) | null = null;
+
+        constructor() {
+          // Trigger onload asynchronously
+          setTimeout(() => {
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
+            }
+          }, 0);
+        }
+
+        set src(_value: string) {
+          // Trigger onload asynchronously
+          setTimeout(() => {
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
+            }
+          }, 0);
+        }
+      } as unknown as typeof Image;
 
       const blob = await convertSvgToPngBlob(svgElement, 256);
 
@@ -56,7 +79,30 @@ describe('qrCodeShare utilities', () => {
         },
       };
 
-      global.Image = vi.fn(() => mockImage) as unknown as typeof Image;
+      global.Image = class MockImage {
+        width: number = 0;
+        height: number = 0;
+        onload: ((this: GlobalEventHandlers, ev: Event) => void) | null = null;
+        onerror: ((this: GlobalEventHandlers, ev: ErrorEvent) => void) | null = null;
+
+        constructor() {
+          // Trigger onload asynchronously
+          setTimeout(() => {
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
+            }
+          }, 0);
+        }
+
+        set src(_value: string) {
+          // Trigger onload asynchronously
+          setTimeout(() => {
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
+            }
+          }, 0);
+        }
+      } as unknown as typeof Image;
 
       const blob = await convertSvgToPngBlob(svgElement, 512);
 
@@ -81,7 +127,30 @@ describe('qrCodeShare utilities', () => {
         },
       };
 
-      global.Image = vi.fn(() => mockImage) as unknown as typeof Image;
+      global.Image = class MockImage {
+        width: number = 0;
+        height: number = 0;
+        onload: ((this: GlobalEventHandlers, ev: Event) => void) | null = null;
+        onerror: ((this: GlobalEventHandlers, ev: ErrorEvent) => void) | null = null;
+
+        constructor() {
+          // Trigger onload asynchronously
+          setTimeout(() => {
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
+            }
+          }, 0);
+        }
+
+        set src(_value: string) {
+          // Trigger onload asynchronously
+          setTimeout(() => {
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
+            }
+          }, 0);
+        }
+      } as unknown as typeof Image;
 
       const originalGetContext = HTMLCanvasElement.prototype.getContext;
       HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue(null);
@@ -104,12 +173,12 @@ describe('qrCodeShare utilities', () => {
     });
 
     it('returns false when navigator.canShare is not available', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn();
+      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
       expect(canShareFiles()).toBe(false);
     });
 
     it('returns true when Web Share API supports files', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn();
+      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
       (navigator as { canShare: (data: { files: File[] }) => boolean }).canShare = vi
         .fn()
         .mockReturnValue(true);
@@ -118,7 +187,7 @@ describe('qrCodeShare utilities', () => {
     });
 
     it('returns false when Web Share API does not support files', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn();
+      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
       (navigator as { canShare: (data: { files: File[] }) => boolean }).canShare = vi
         .fn()
         .mockReturnValue(false);
@@ -127,7 +196,7 @@ describe('qrCodeShare utilities', () => {
     });
 
     it('handles exceptions gracefully', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn();
+      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
       (navigator as { canShare: (data: { files: File[] }) => boolean }).canShare = vi
         .fn()
         .mockImplementation(() => {
@@ -277,25 +346,30 @@ describe('qrCodeShare utilities', () => {
       svgElement.setAttribute('width', '256');
       svgElement.setAttribute('height', '256');
 
-      // Mock Image for SVG to PNG conversion
-      mockImage = {
-        width: 0,
-        height: 0,
-        onload: null,
-        onerror: null,
-        set src(_value: string) {
+      global.Image = class MockImage {
+        width: number = 0;
+        height: number = 0;
+        onload: ((this: GlobalEventHandlers, ev: Event) => void) | null = null;
+        onerror: ((this: GlobalEventHandlers, ev: ErrorEvent) => void) | null = null;
+
+        constructor() {
+          // Trigger onload asynchronously
           setTimeout(() => {
-            if (mockImage.onload) {
-              mockImage.onload.call({} as GlobalEventHandlers, new Event('load'));
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
             }
           }, 0);
-        },
-        get src() {
-          return '';
-        },
-      };
+        }
 
-      global.Image = vi.fn(() => mockImage) as unknown as typeof Image;
+        set src(_value: string) {
+          // Trigger onload asynchronously
+          setTimeout(() => {
+            if (this.onload) {
+              this.onload.call({} as GlobalEventHandlers, new Event('load'));
+            }
+          }, 0);
+        }
+      } as unknown as typeof Image;
     });
 
     afterEach(() => {
