@@ -173,12 +173,16 @@ describe('qrCodeShare utilities', () => {
     });
 
     it('returns false when navigator.canShare is not available', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
+      (navigator as { share: () => Promise<void> }).share = vi
+        .fn()
+        .mockImplementation(() => Promise.resolve());
       expect(canShareFiles()).toBe(false);
     });
 
     it('returns true when Web Share API supports files', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
+      (navigator as { share: () => Promise<void> }).share = vi
+        .fn()
+        .mockImplementation(() => Promise.resolve());
       (navigator as { canShare: (data: { files: File[] }) => boolean }).canShare = vi
         .fn()
         .mockReturnValue(true);
@@ -187,7 +191,9 @@ describe('qrCodeShare utilities', () => {
     });
 
     it('returns false when Web Share API does not support files', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
+      (navigator as { share: () => Promise<void> }).share = vi
+        .fn()
+        .mockImplementation(() => Promise.resolve());
       (navigator as { canShare: (data: { files: File[] }) => boolean }).canShare = vi
         .fn()
         .mockReturnValue(false);
@@ -196,7 +202,9 @@ describe('qrCodeShare utilities', () => {
     });
 
     it('handles exceptions gracefully', () => {
-      (navigator as { share: () => Promise<void> }).share = vi.fn().mockImplementation(() => Promise.resolve());
+      (navigator as { share: () => Promise<void> }).share = vi
+        .fn()
+        .mockImplementation(() => Promise.resolve());
       (navigator as { canShare: (data: { files: File[] }) => boolean }).canShare = vi
         .fn()
         .mockImplementation(() => {
@@ -333,13 +341,6 @@ describe('qrCodeShare utilities', () => {
 
   describe('shareOrDownloadQRCode', () => {
     let svgElement: SVGSVGElement;
-    let mockImage: {
-      width: number;
-      height: number;
-      onload: ((this: GlobalEventHandlers, ev: Event) => void) | null;
-      onerror: ((this: GlobalEventHandlers, ev: ErrorEvent) => void) | null;
-      src: string;
-    };
 
     beforeEach(() => {
       svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

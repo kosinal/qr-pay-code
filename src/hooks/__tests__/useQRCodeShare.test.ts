@@ -14,9 +14,9 @@ describe('useQRCodeShare hook', () => {
     mockCanShareFiles = vi.fn().mockReturnValue(true);
 
     vi.spyOn(qrCodeShareUtils, 'shareOrDownloadQRCode').mockImplementation(
-      mockShareOrDownloadQRCode
+      mockShareOrDownloadQRCode as any
     );
-    vi.spyOn(qrCodeShareUtils, 'canShareFiles').mockImplementation(mockCanShareFiles);
+    vi.spyOn(qrCodeShareUtils, 'canShareFiles').mockImplementation(mockCanShareFiles as any);
   });
 
   it('initializes with default state', () => {
