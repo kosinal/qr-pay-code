@@ -1,14 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GeminiService } from '../geminiService';
 
-const mockGenerateContent = vi.fn();
+const mockGenerateContent = vi.fn().mockImplementation(() => ({}));
 
 vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: {
-      generateContent: mockGenerateContent,
-    },
-  })),
+  GoogleGenAI: vi.fn().mockImplementation(function () {
+    return {
+      models: {
+        generateContent: mockGenerateContent,
+      },
+    };
+  }),
 }));
 
 describe('GeminiService - OCR Functionality', () => {

@@ -2,14 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GeminiService, createGeminiService } from '../geminiService';
 import type { PaymentData } from '../../types/paymentData.ts';
 
-const mockGenerateContent = vi.fn();
+const mockGenerateContent = vi.fn().mockImplementation(() => ({}));
 
 vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: {
-      generateContent: mockGenerateContent,
-    },
-  })),
+  GoogleGenAI: vi.fn().mockImplementation(function () {
+    return {
+      models: {
+        generateContent: mockGenerateContent,
+      },
+    };
+  }),
 }));
 
 describe('GeminiService', () => {
