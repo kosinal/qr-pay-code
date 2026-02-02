@@ -1,5 +1,5 @@
 # QR Pay Code Generator
-
+gghghg
 A modern web application that generates QR codes for Czech bank payments using AI-powered natural language processing. Simply describe your payment in plain text, and let AI extract the details to create a scannable payment QR code.
 
 ## 🌟 Features
