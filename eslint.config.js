@@ -91,6 +91,7 @@ export default [
       'prefer-const': 'error',
       'no-var': 'error',
       'no-control-regex': 'off',
+      'no-undef': 'off', // TypeScript handles this better than ESLint
     },
     settings: {
       react: {
@@ -112,11 +113,6 @@ export default [
         test: 'readonly',
         Event: 'readonly',
         global: 'readonly',
-        GlobalEventHandlers: 'readonly',
-        ErrorEvent: 'readonly',
-        CanvasRenderingContext2D: 'readonly',
-        BlobCallback: 'readonly',
-        TimerHandler: 'readonly',
       },
     },
     rules: {
