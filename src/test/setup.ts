@@ -11,7 +11,11 @@ beforeAll(() => {
   // which returns empty strings in jsdom. parseFloat('') → NaN → setTimeout(fn, NaN)
   // triggers Node.js TimeoutNaNWarning.
   const origSetTimeout = globalThis.setTimeout;
-  globalThis.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => {
+  globalThis.setTimeout = ((
+    handler: (...args: unknown[]) => void | string,
+    timeout?: number,
+    ...args: unknown[]
+  ) => {
     return origSetTimeout(
       handler,
       typeof timeout === 'number' && Number.isNaN(timeout) ? 0 : timeout,
