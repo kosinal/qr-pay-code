@@ -116,6 +116,7 @@ export default [
         ErrorEvent: 'readonly',
         CanvasRenderingContext2D: 'readonly',
         BlobCallback: 'readonly',
+        TimerHandler: 'readonly',
       },
     },
     rules: {
