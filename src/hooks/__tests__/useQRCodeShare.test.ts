@@ -135,13 +135,18 @@ describe('useQRCodeShare hook', () => {
     expect(mockShareOrDownloadQRCode).toHaveBeenCalledWith(svgElement, customFilename);
   });
 
-  it('clears error when clearError is called', () => {
+  it('clears error when clearError is called', async () => {
+    mockShareOrDownloadQRCode.mockRejectedValue(new Error('test error'));
+
     const { result } = renderHook(() => useQRCodeShare());
 
-    // Manually set error state
-    act(() => {
-      result.current.shareQRCode(document.createElementNS('http://www.w3.org/2000/svg', 'svg'));
+    await act(async () => {
+      await result.current.shareQRCode(
+        document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      );
     });
+
+    expect(result.current.state.error).toBe('test error');
 
     act(() => {
       result.current.clearError();
