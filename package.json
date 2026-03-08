@@ -18,9 +18,9 @@
     "check": "npm run format:check && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
-    "@google/genai": "^1.43.0",
+    "@google/genai": "^1.44.0",
     "@spayd/core": "^0.0.3",
-    "@types/node": "^24.11.0",
+    "@types/node": "^24.12.0",
     "add": "^2.0.6",
     "bootstrap": "^5.3.8",
     "ibankit": "^1.6.5",
@@ -28,10 +28,10 @@
     "react": "^19.2.4",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.4",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.6.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.3",
+    "@eslint/js": "^9.39.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -41,7 +41,7 @@
     "@typescript-eslint/parser": "^8.56.1",
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/coverage-v8": "^4.0.18",
-    "eslint": "^9.39.3",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
