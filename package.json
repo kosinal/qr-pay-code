@@ -18,9 +18,9 @@
     "check": "npm run format:check && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
-    "@google/genai": "^1.47.0",
+    "@google/genai": "^1.48.0",
     "@spayd/core": "^0.0.3",
-    "@types/node": "^24.12.0",
+    "@types/node": "^24.12.2",
     "add": "^2.0.6",
     "bootstrap": "^5.3.8",
     "ibankit": "^1.6.5",
@@ -37,8 +37,8 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.57.2",
-    "@typescript-eslint/parser": "^8.57.2",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.2",
     "eslint": "^9.39.4",
