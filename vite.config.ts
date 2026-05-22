@@ -156,11 +156,13 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'bootstrap-vendor': ['bootstrap', 'react-bootstrap'],
-          'qr-vendor': ['qrcode.react'],
-          'utils-vendor': ['@spayd/core', 'ibankit', '@google/genai']
+        manualChunks: (id: string) => {
+          if (!id.includes('node_modules')) return null
+          if (/node_modules\/(react|react-dom)\//.test(id)) return 'react-vendor'
+          if (/node_modules\/(bootstrap|react-bootstrap)\//.test(id)) return 'bootstrap-vendor'
+          if (id.includes('node_modules/qrcode.react/')) return 'qr-vendor'
+          if (/node_modules\/(@spayd\/core|ibankit|@google\/genai)\//.test(id)) return 'utils-vendor'
+          return null
         }
       }
     }
