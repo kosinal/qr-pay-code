@@ -181,7 +181,7 @@ describe('SimpleLayout Component', () => {
 
     vi.mocked(geminiService.createGeminiService).mockReturnValue(mockService as any);
 
-    const consoleErrorSpy = vi.spyOn(console, 'error');
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     render(<SimpleLayout />);
 
     const apiKeyInput = screen.getByLabelText('API Key');
@@ -211,7 +211,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '123456-7890',
+          account_number: '123457-7894',
           bank_code: '0800',
           amount: 1000,
           currency: 'CZK',
@@ -244,7 +244,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 500,
           currency: 'CZK',
@@ -277,7 +277,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '123-45',
+          account_number: '123-43',
           bank_code: '0800',
           amount: 250,
           currency: 'CZK',
@@ -310,7 +310,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1-999',
+          account_number: '19-924',
           bank_code: '0800',
           amount: 100,
           currency: 'CZK',
@@ -484,7 +484,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 500,
           currency: 'CZK',
@@ -519,7 +519,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 1500,
           currency: 'CZK',
@@ -554,7 +554,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 750,
           currency: 'CZK',
@@ -589,7 +589,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 800,
           currency: 'CZK',
@@ -624,7 +624,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 2000,
           currency: 'CZK',
@@ -659,7 +659,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 600,
           currency: 'CZK',
@@ -703,7 +703,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 500,
           currency: 'CZK',
@@ -738,7 +738,7 @@ describe('SimpleLayout Component', () => {
       const mockService = createMockGeminiService({
         text: 'Gemini API response',
         paymentData: {
-          account_number: '1234567890',
+          account_number: '1234567899',
           bank_code: '0800',
           amount: 500,
           currency: 'CZK',
@@ -774,13 +774,13 @@ describe('SimpleLayout Component', () => {
     it('displays validation warning when validation fails', async () => {
       const mockService = createMockGeminiService({
         text: JSON.stringify({
-          account_number: '123456789',
+          account_number: '123',
           bank_code: '0100',
           amount: 1000,
           currency: 'CZK',
         }),
         paymentData: {
-          account_number: '123456789',
+          account_number: '123',
           bank_code: '0100',
           amount: 1000,
           currency: 'CZK',
@@ -813,13 +813,13 @@ describe('SimpleLayout Component', () => {
     it('dismisses validation warning when close button is clicked', async () => {
       const mockService = createMockGeminiService({
         text: JSON.stringify({
-          account_number: '123456789',
+          account_number: '123',
           bank_code: '0100',
           amount: 1000,
           currency: 'CZK',
         }),
         paymentData: {
-          account_number: '123456789',
+          account_number: '123',
           bank_code: '0100',
           amount: 1000,
           currency: 'CZK',
